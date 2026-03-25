@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michael Bravo — Pediatric EM Physician & AI Expert</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #1a1a1a;
+    --mid: #6b6b6b;
+    --light: #b0b0b0;
+    --rule: #e8e8e8;
+    --bg: #fafaf8;
+    --accent: #2d6a4f;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── LAYOUT ── */
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    width: 100%;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 4rem 0 0;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: rise 0.7s ease forwards 0.1s;
+  }
+
+  .location {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .location::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 8vw, 4.8rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--mid);
+  }
+
+  .title-line {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--mid);
+    letter-spacing: 0.02em;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── RULE ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 3rem 0;
+    opacity: 0;
+    animation: rise 0.7s ease forwards 0.3s;
+  }
+
+  /* ── BIO ── */
+  .bio {
+    opacity: 0;
+    animation: rise 0.7s ease forwards 0.4s;
+  }
+
+  .bio p {
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--mid);
+    max-width: 560px;
+  }
+
+  .bio p + p {
+    margin-top: 1rem;
+  }
+
+  /* ── CONTACT ── */
+  .contact {
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    opacity: 0;
+    animation: rise 0.7s ease forwards 0.55s;
+  }
+
+  .contact-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--light);
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+    background: white;
+  }
+
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(45, 106, 79, 0.04);
+  }
+
+  .contact-link svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: auto;
+    padding: 3rem 0 2.5rem;
+    opacity: 0;
+    animation: rise 0.7s ease forwards 0.7s;
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: var(--light);
+    font-weight: 400;
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .footer-nav a {
+    font-size: 0.75rem;
+    color: var(--light);
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+
+  .footer-nav a:hover {
+    color: var(--accent);
+  }
+
+  /* ── ANIMATION ── */
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    header { padding-top: 2.5rem; }
+    .contact-link { font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <header>
+    <p class="location">Toronto, Ontario</p>
+    <h1>Michael<br><em>Bravo</em></h1>
+    <p class="title-line">Pediatric EM Physician &nbsp;·&nbsp; AI Expert</p>
+  </header>
+
+  <hr class="divider">
+
+  <div class="bio">
+    <p>
+      I'm a Pediatric Emergency Medicine physician based in Toronto, working at the intersection of clinical medicine and artificial intelligence. My work spans frontline patient care and the emerging role of AI in healthcare systems.
+    </p>
+    <p>
+      I focus on how generative AI, synthetic data, and clinical decision support tools can be thoughtfully integrated into pediatric care — balancing innovation with the governance rigor that patients deserve.
+    </p>
+  </div>
+
+  <div class="contact">
+    <span class="contact-label">Get in touch</span>
+    <a href="mailto:michael.bravo@sickkids.ca" class="contact-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+      </svg>
+      michael.bravo@sickkids.ca
+    </a>
+    <a href="https://www.linkedin.com/in/michael-bravo-19753028/" target="_blank" rel="noopener" class="contact-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+        <rect x="2" y="9" width="4" height="12"/>
+        <circle cx="4" cy="4" r="2"/>
+      </svg>
+      LinkedIn
+    </a>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-copy">© 2026 Michael Bravo</span>
+      <nav class="footer-nav">
+        <a href="/synthetic-data">Synthetic Data</a>
+        <a href="/nicu">NICU Reference</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
