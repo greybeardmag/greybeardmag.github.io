@@ -361,7 +361,7 @@
   /* ─── BENEFITS / CHALLENGES GRID ─── */
   .bc-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
   }
 
@@ -434,6 +434,10 @@
     font-size: 0.9rem;
     font-weight: 300;
     line-height: 1.7;
+  }
+
+  .bc-card.full-width {
+    grid-column: 1 / -1;
   }
 
   /* ─── CHARTS SECTION ─── */
@@ -1785,7 +1789,7 @@
     </p>
   </div>
   <div class="bc-grid">
-    <div class="bc-card challenge fade-in">
+    <div class="bc-card challenge full-width fade-in">
       <h3><span class="h-icon">⚠️</span>Fidelity & <span class="term" onclick="toggleTip(this)">Distribution Drift<span class="term-q">?</span><span class="tooltip-panel"><span class="tooltip-header"><span class="tooltip-title">Distribution Drift</span><button class="tooltip-close" onclick="event.stopPropagation();closeTips()">✕</button></span><span class="tooltip-body">When the statistical patterns in synthetic data gradually deviate from the real source data. This can happen during generation (the model subtly shifts averages, smooths out extremes, or alters relationships between variables) or over time (the real patient population changes but the synthetic dataset remains static).</span><span class="tooltip-example"><strong>Pediatric example</strong>If real SickKids data shows that 3% of asthma patients have a rare comorbidity, but the synthetic generator "drifts" this to 1.5%, any downstream research on that subgroup will underestimate its prevalence by half.</span><a class="tooltip-link" href="https://en.wikipedia.org/wiki/Dataset_shift" target="_blank">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></span></span></h3>
       <p>Synthetic generators can subtly distort correlations, flatten <span class="term" onclick="toggleTip(this)">rare signals<span class="term-q">?</span><span class="tooltip-panel"><span class="tooltip-header"><span class="tooltip-title">Rare Signal Loss</span><button class="tooltip-close" onclick="event.stopPropagation();closeTips()">✕</button></span><span class="tooltip-body">When a generative model fails to reproduce uncommon but clinically important patterns in the data. Models tend to learn the most common patterns well, but may smooth over or completely miss rare events — like unusual drug reactions, atypical presentations, or low-frequency diagnoses.</span><span class="tooltip-example"><strong>Why this matters in pediatrics</strong>A rare metabolic condition affecting 0.1% of SickKids patients might be absent entirely from the synthetic data because the generator didn't have enough examples to learn the pattern. Anyone using that synthetic data would have a blind spot for that condition.</span></span></span>, and introduce artifacts. In pediatrics — where rare diseases and edge cases are clinically critical — even small fidelity losses can produce misleading downstream analyses.</p>
       <div class="bc-example">
@@ -1827,7 +1831,7 @@
       <h3><span class="h-icon">⚖️</span>Regulatory Grey Zone</h3>
       <p>No Canadian or international regulator has definitively ruled on the legal status of synthetic data. It exists in a gap between PHIPA/PIPEDA's definitions. Ethics boards are inconsistently waiving review for synthetic data research — a loophole that could tighten.</p>
     </div>
-    <div class="bc-card challenge fade-in">
+    <div class="bc-card challenge full-width fade-in">
       <h3><span class="h-icon">🧬</span><span class="term" onclick="toggleTip(this)">Bias Amplification<span class="term-q">?</span><span class="tooltip-panel"><span class="tooltip-header"><span class="tooltip-title">Bias Amplification</span><button class="tooltip-close" onclick="event.stopPropagation();closeTips()">✕</button></span><span class="tooltip-body">When a generative model not only reproduces existing biases in the training data, but actually makes them worse. If certain populations are underrepresented in the source data, the synthetic generator may further reduce their representation — or learn incorrect patterns about them due to having too few examples.</span><span class="tooltip-example"><strong>How it happens</strong>If only 2% of SickKids' source data represents Indigenous children (vs. ~8% of Ontario's child population), a GAN might learn that "typical" patients don't look like Indigenous children. The synthetic data then underrepresents them even further — and any AI models trained on it will perform worse for that group.</span><a class="tooltip-link" href="https://en.wikipedia.org/wiki/Algorithmic_bias" target="_blank">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></span></span></h3>
       <p>If real SickKids data contains demographic under-representation (e.g., Indigenous populations, rural communities), synthetic generation can amplify these biases. Models trained on biased synthetic data may perpetuate <span class="term" onclick="toggleTip(this)">health inequities<span class="term-q">?</span><span class="tooltip-panel"><span class="tooltip-header"><span class="tooltip-title">Health Inequities</span><button class="tooltip-close" onclick="event.stopPropagation();closeTips()">✕</button></span><span class="tooltip-body">Systematic, avoidable, and unfair differences in health outcomes between population groups. Unlike simple health "differences," inequities are rooted in social, economic, and structural factors — and are considered unjust. Using biased data to train clinical tools risks encoding these inequities into automated systems.</span><span class="tooltip-example"><strong>The concern</strong>If an AI diagnostic tool is trained on synthetic data that underrepresents certain ethnic groups, it may perform less accurately for those groups — effectively providing worse care to populations that already face barriers to healthcare access.</span></span></span> at scale.</p>
       <div class="bc-example">
