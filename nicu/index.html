@@ -132,12 +132,11 @@ html.light .badge-live { opacity: 0.9; }
 /* ── HEADER ── */
 header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(0,0,0,0);
   background-color: var(--bg);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
   padding: 10px 20px;
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 12px;
 }
 .logo {
   font-family: 'IBM Plex Mono', monospace;
@@ -145,10 +144,18 @@ header {
   color: var(--accent);
   letter-spacing: 0.04em;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .logo span { color: var(--text-dim); }
-nav { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
-nav a {
+.header-right {
+  display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0;
+}
+
+/* Desktop nav — visible, inline */
+nav#main-nav {
+  display: flex; gap: 4px; flex-wrap: wrap; flex: 1;
+}
+nav#main-nav a {
   color: var(--text-dim);
   text-decoration: none;
   font-size: 12px;
@@ -158,7 +165,60 @@ nav a {
   transition: all 0.15s;
   white-space: nowrap;
 }
-nav a:hover { color: var(--accent); border-color: var(--accent); }
+nav#main-nav a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Hamburger button — hidden on desktop */
+#hamburger {
+  display: none;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Mobile dropdown nav */
+#mobile-nav {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px 16px;
+  z-index: 99;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+#mobile-nav.open { display: flex; }
+#mobile-nav a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 9px 12px;
+  border-radius: 4px;
+  border-left: 2px solid transparent;
+  transition: all 0.12s;
+}
+#mobile-nav a:hover, #mobile-nav a:active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: rgba(0,212,255,0.05);
+}
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+  nav#main-nav { display: none; }
+  #hamburger { display: block; }
+  header { position: sticky; } /* ensure relative for dropdown */
+}
+
 .badge-live {
   background: var(--red);
   color: white;
@@ -168,6 +228,7 @@ nav a:hover { color: var(--accent); border-color: var(--accent); }
   border-radius: 3px;
   letter-spacing: 0.05em;
   animation: pulse 2s infinite;
+  flex-shrink: 0;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
 
@@ -528,9 +589,11 @@ section { margin-bottom: 32px; }
 </head>
 <body>
 
-<header>
+<header style="position:relative;">
   <div class="logo">NICU<span>//</span>NOTES</div>
-  <nav>
+
+  <!-- Desktop nav -->
+  <nav id="main-nav">
     <a href="#summary">Summary</a>
     <a href="#checklist">Order Checklist</a>
     <a href="#antenatal">Antenatal</a>
@@ -559,9 +622,65 @@ section { margin-bottom: 32px; }
     <a href="#cranial-bleeds">Cranial Bleeds</a>
     <a href="#references">References</a>
   </nav>
-  <span class="badge-live">ON-CALL</span>
-  <button id="theme-toggle" onclick="toggleTheme()" style="padding:5px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-size:11px; cursor:pointer; white-space:nowrap; transition:all 0.15s;">☀ Light</button>
+
+  <!-- Right side controls -->
+  <div class="header-right">
+    <span class="badge-live">ON-CALL</span>
+    <button id="theme-toggle" onclick="toggleTheme()" style="padding:5px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-size:11px; cursor:pointer; white-space:nowrap; transition:all 0.15s;">☀ Light</button>
+    <button id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
+  </div>
+
+  <!-- Mobile dropdown nav -->
+  <nav id="mobile-nav">
+    <a href="#summary" onclick="closeMobileNav()">Summary</a>
+    <a href="#checklist" onclick="closeMobileNav()">Order Checklist</a>
+    <a href="#antenatal" onclick="closeMobileNav()">Antenatal</a>
+    <a href="#resuscitation" onclick="closeMobileNav()">Resuscitation</a>
+    <a href="#medications" onclick="closeMobileNav()">Medications</a>
+    <a href="#preterm" onclick="closeMobileNav()">Preterm Care</a>
+    <a href="#respiratory" onclick="closeMobileNav()">Respiratory</a>
+    <a href="#neurology" onclick="closeMobileNav()">Neurology</a>
+    <a href="#nutrition" onclick="closeMobileNav()">Nutrition</a>
+    <a href="#jaundice" onclick="closeMobileNav()">Jaundice</a>
+    <a href="#sepsis" onclick="closeMobileNav()">Sepsis</a>
+    <a href="#screening" onclick="closeMobileNav()">Screening</a>
+    <a href="#procedures" onclick="closeMobileNav()">Procedures</a>
+    <a href="#los" onclick="closeMobileNav()">LOS &amp; Vitals</a>
+    <a href="#formulas" onclick="closeMobileNav()">Formulas / GIR</a>
+    <a href="#endocrine" onclick="closeMobileNav()">Endocrine / IDM</a>
+    <a href="#finnegan" onclick="closeMobileNav()">Finnegan / NOWS</a>
+    <a href="#followup" onclick="closeMobileNav()">Follow-Up</a>
+    <a href="#nec" onclick="closeMobileNav()">NEC</a>
+    <a href="#transfusion" onclick="closeMobileNav()">Transfusion</a>
+    <a href="#cardiology" onclick="closeMobileNav()">Cardiology</a>
+    <a href="#practical" onclick="closeMobileNav()">Transport / RSV</a>
+    <a href="#hiv" onclick="closeMobileNav()">HIV-Exposed Infant</a>
+    <a href="#udt" onclick="closeMobileNav()">Undescended Testes</a>
+    <a href="#hydronephrosis" onclick="closeMobileNav()">Hydronephrosis</a>
+    <a href="#cranial-bleeds" onclick="closeMobileNav()">Cranial Bleeds</a>
+    <a href="#references" onclick="closeMobileNav()">References</a>
+  </nav>
 </header>
+
+<script>
+function toggleMobileNav() {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('hamburger');
+  const open = nav.classList.toggle('open');
+  btn.textContent = open ? '✕' : '☰';
+}
+function closeMobileNav() {
+  document.getElementById('mobile-nav').classList.remove('open');
+  document.getElementById('hamburger').textContent = '☰';
+}
+// Close if user clicks outside
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobile-nav');
+  if (nav.classList.contains('open') && !e.target.closest('header')) {
+    closeMobileNav();
+  }
+});
+</script>
 
 <script>
 function toggleTheme() {
