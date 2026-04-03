@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pediatric Fever Dosing Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C0392B;
+    --red-light: #F9E8E7;
+    --blue: #1A3A5C;
+    --blue-mid: #2563A8;
+    --blue-light: #E8F0FA;
+    --orange: #D9651A;
+    --orange-light: #FEF3E7;
+    --ink: #1C1C1E;
+    --mid: #5A5A6E;
+    --rule: #D8DCE6;
+    --bg: #F4F6FB;
+    --card: #FFFFFF;
+    --shadow: 0 2px 12px rgba(26,58,92,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  .screen-wrapper {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .header-left h1 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .header-left h1 span { color: var(--red); }
+  .header-left p {
+    font-size: 0.82rem;
+    color: var(--mid);
+    margin-top: 5px;
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .print-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .print-btn:hover { background: var(--blue-mid); }
+  .print-btn svg { width: 15px; height: 15px; }
+
+  /* ── FEVER DEFINITION BOX ── */
+  .fever-box {
+    background: #fff;
+    border: 1.5px solid #b8cfe8;
+    border-left: 4px solid var(--blue-mid);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 16px;
+    align-items: start;
+  }
+  .fever-icon { font-size: 1.6rem; line-height: 1; margin-top: 2px; }
+  .fever-box h3 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+    margin-bottom: 6px;
+  }
+  .fever-temps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+  .temp-chip {
+    background: var(--blue-light);
+    border-radius: 7px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .temp-chip span { font-weight: 400; color: var(--mid); font-size: 0.72rem; margin-left: 4px; }
+  .fever-note {
+    font-size: 0.75rem;
+    color: var(--mid);
+    line-height: 1.6;
+  }
+  .fever-note strong { color: var(--ink); }
+
+  /* ── INPUT CARD ── */
+  .input-card {
+    background: var(--blue);
+    border-radius: 16px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .input-card label {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 7px;
+  }
+  .weight-row { display: flex; align-items: center; gap: 9px; }
+  .weight-input {
+    background: rgba(255,255,255,0.13);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 9px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    width: 100px;
+    padding: 5px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+    text-align: center;
+  }
+  .weight-input::placeholder { color: rgba(255,255,255,0.3); }
+  .weight-input:focus { border-color: rgba(255,255,255,0.65); }
+
+  .unit-toggle {
+    display: flex;
+    border-radius: 7px;
+    overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,0.25);
+  }
+  .unit-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .unit-btn.active { background: rgba(255,255,255,0.2); color: #fff; }
+
+  /* Age Toggle */
+  .age-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 9px;
+    color: rgba(255,255,255,0.8);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .age-toggle-btn.under6 {
+    background: rgba(192,57,43,0.45);
+    border-color: rgba(255,140,120,0.5);
+    color: #fff;
+  }
+  .check-circle {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .age-toggle-btn.under6 .check-circle {
+    background: #fff;
+    border-color: #fff;
+    color: var(--red);
+  }
+
+  .dose-display { text-align: right; }
+  .dose-display .dose-label {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .dose-display .dose-value {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 2px;
+  }
+  .dose-display .dose-sub {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 1px;
+  }
+
+  .input-age-note {
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.74rem;
+    line-height: 1.45;
+  }
+  .input-age-note.hidden { display: none; }
+  .input-age-note.warn { background: rgba(192,57,43,0.3); color: #ffd5d1; }
+
+  /* ── MAX BANNER ── */
+  .max-banner {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: var(--blue-light);
+    border: 1px solid #b8cfe8;
+  }
+  .max-item { flex: 1; min-width: 130px; }
+  .max-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+    margin-bottom: 3px;
+  }
+  .max-val { font-size: 1.15rem; font-weight: 700; color: var(--blue); }
+  .max-sub { font-size: 0.68rem; color: var(--mid); margin-top: 1px; }
+
+  /* ── DRUG SECTIONS ── */
+  .drug-section { margin-bottom: 22px; }
+  .drug-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .drug-badge {
+    border-radius: 7px;
+    padding: 5px 13px;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+  .badge-tylenol { background: var(--red); color: #fff; }
+  .badge-advil   { background: var(--orange); color: #fff; }
+  .drug-generic { font-size: 0.78rem; color: var(--mid); }
+  .drug-dose-range { margin-left: auto; font-size: 0.76rem; color: var(--mid); text-align: right; }
+  .drug-dose-range strong { color: var(--ink); font-weight: 600; }
+
+  /* ── DOSING TABLE ── */
+  .dose-table-wrap {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1.5px solid var(--rule);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .dose-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .dose-table thead tr {
+    background: var(--bg);
+  }
+  .dose-table.tylenol thead tr { border-top: 3px solid var(--red); }
+  .dose-table.advil   thead tr { border-top: 3px solid var(--orange); }
+
+  .dose-table th {
+    padding: 9px 14px;
+    text-align: left;
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--mid);
+    border-bottom: 1.5px solid var(--rule);
+    white-space: nowrap;
+  }
+  .dose-table th.col-amount { text-align: center; }
+
+  .dose-table td {
+    padding: 10px 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--rule);
+  }
+  .dose-table tbody tr:last-child td { border-bottom: none; }
+  .dose-table tbody tr:hover { background: #fafbfd; }
+
+  .td-formulation { font-weight: 600; color: var(--ink); }
+  .td-conc { font-size: 0.75rem; color: var(--mid); margin-top: 1px; }
+  .td-note-tag {
+    display: inline-block;
+    margin-top: 3px;
+    background: var(--bg);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.65rem;
+    color: var(--mid);
+    font-weight: 500;
+  }
+
+  .td-amount {
+    text-align: center;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .td-amount.tylenol-amt { color: var(--red); }
+  .td-amount.advil-amt   { color: var(--orange); }
+  .td-amount.pending     { color: var(--rule); font-size: 0.8rem; font-weight: 400; }
+
+  .td-unit {
+    font-size: 0.7rem;
+    color: var(--mid);
+    margin-top: 2px;
+    text-align: center;
+  }
+
+  .td-freq {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .td-freq-sub {
+    font-size: 0.7rem;
+    color: var(--mid);
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  /* ── ADVIL WARNING ── */
+  .advil-warning {
+    background: #FFF4E5;
+    border: 2px solid var(--orange);
+    border-radius: 13px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: none;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .advil-warning.show { display: flex; }
+  .advil-warning-icon { font-size: 2rem; flex-shrink: 0; }
+  .advil-warning h3 { font-size: 0.95rem; font-weight: 700; color: #7D3600; margin-bottom: 7px; }
+  .advil-warning p { font-size: 0.8rem; color: #7D3600; line-height: 1.6; }
+  .advil-warning p strong { font-weight: 700; }
+
+  /* ── SCHEDULE ── */
+  .schedule-section { margin-bottom: 20px; }
+  .schedule-header {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 10px;
+  }
+  .schedule-tabs { display: flex; gap: 7px; margin-bottom: 12px; flex-wrap: wrap; }
+  .sched-tab {
+    background: var(--card);
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sched-tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  .schedule-card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1.5px solid var(--rule);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .schedule-card h4 { font-size: 0.82rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .sched-desc { font-size: 0.74rem; color: var(--mid); margin-bottom: 14px; line-height: 1.55; }
+
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; }
+  .tl-row { display: flex; align-items: stretch; }
+  .tl-time {
+    width: 60px;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--mid);
+    padding-top: 9px;
+    padding-right: 10px;
+    text-align: right;
+  }
+  .tl-spine {
+    width: 22px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tl-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    margin-top: 9px;
+    flex-shrink: 0;
+    border: 2px solid #fff;
+  }
+  .tl-dot.t-dot    { background: var(--red);    box-shadow: 0 0 0 2px #f0c5c2; }
+  .tl-dot.a-dot    { background: var(--orange);  box-shadow: 0 0 0 2px #fcd9b5; }
+  .tl-dot.both-dot {
+    background: linear-gradient(135deg, var(--red) 50%, var(--orange) 50%);
+    box-shadow: 0 0 0 2px #e0d0c0;
+  }
+  .tl-line { width: 2px; flex: 1; background: var(--rule); min-height: 8px; }
+  .tl-row:last-child .tl-line { display: none; }
+  .tl-content { flex: 1; padding: 5px 0 13px 10px; }
+  .tl-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
+  .tl-pill {
+    border-radius: 5px;
+    padding: 3px 9px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .tl-pill.t { background: var(--red-light); color: var(--red); }
+  .tl-pill.a { background: var(--orange-light); color: var(--orange); }
+  .tl-note { font-size: 0.68rem; color: var(--mid); }
+
+  /* ── SAFETY CARDS ── */
+  .safety-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .safety-card { border-radius: 11px; padding: 13px 15px; font-size: 0.74rem; line-height: 1.55; }
+  .safety-card.tylenol-safe { background: var(--red-light); border: 1px solid #f0c5c2; }
+  .safety-card.advil-safe   { background: var(--orange-light); border: 1px solid #fcd9b5; }
+  .safety-card h4 {
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .safety-card.tylenol-safe h4 { color: var(--red); }
+  .safety-card.advil-safe h4   { color: var(--orange); }
+  .safety-card ul { padding-left: 14px; color: var(--mid); }
+  .safety-card li { margin-bottom: 3px; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 0.67rem;
+    color: var(--mid);
+    line-height: 1.6;
+  }
+  footer strong { color: var(--ink); }
+
+  /* ══════════════════════
+     PRINT
+  ══════════════════════ */
+  @media print {
+    @page { size: letter portrait; margin: 13mm 13mm 13mm 13mm; }
+    body {
+      background: #fff !important;
+      font-size: 9pt;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .screen-wrapper { padding: 0; max-width: 100%; }
+    .print-btn, .schedule-tabs, .age-toggle-btn { display: none !important; }
+    header { margin-bottom: 9pt; }
+    .header-left h1 { font-size: 15pt; }
+    .fever-box { margin-bottom: 9pt; }
+    .input-card { padding: 10pt 12pt; margin-bottom: 9pt; gap: 12pt; }
+    .weight-input { font-size: 14pt; width: 68pt; }
+    .form-grid { grid-template-columns: repeat(4, 1fr); gap: 5pt; }
+    .form-card { padding: 7pt 9pt; }
+    .form-amount { font-size: 12pt; }
+    .dose-table th, .dose-table td { padding: 6pt 9pt; }
+    .dose-table { font-size: 8pt; }
+    .td-amount { font-size: 11pt; }
+    .safety-grid { gap: 6pt; margin-bottom: 9pt; }
+    .safety-card { padding: 7pt 9pt; }
+    .max-banner { padding: 8pt 11pt; margin-bottom: 9pt; }
+    .drug-section { margin-bottom: 10pt; }
+    .schedule-card { padding: 9pt 11pt; }
+    .schedule-section { margin-bottom: 10pt; }
+    .sched-panel { display: none !important; }
+    .sched-panel.active-panel { display: block !important; }
+    footer { font-size: 6.5pt; margin-top: 9pt; }
+    .advil-warning { padding: 10pt 13pt; }
+  }
+</style>
+</head>
+<body>
+<div class="screen-wrapper">
+
+  <header>
+    <div class="header-left">
+      <h1>Pediatric <span>Fever</span> Dosing Sheet</h1>
+      <p>Enter your child's weight and age group to calculate correct doses of Acetaminophen (Tylenol) and Ibuprofen (Advil/Motrin) across all formulations.</p>
+    </div>
+    <button class="print-btn" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Print Sheet
+    </button>
+  </header>
+
+  <!-- FEVER DEFINITION -->
+  <div class="fever-box">
+    <div class="fever-icon">🌡️</div>
+    <div>
+      <h3>What is a Fever?</h3>
+      <div class="fever-temps">
+        <div class="temp-chip">≥ 38.0°C <span>Rectal (most accurate)</span></div>
+        <div class="temp-chip">≥ 38.0°C <span>Temporal / Ear</span></div>
+        <div class="temp-chip">≥ 37.5°C <span>Oral</span></div>
+        <div class="temp-chip">≥ 37.5°C <span>Axillary (least accurate)</span></div>
+      </div>
+      <div class="fever-note">
+        <strong>When to give fever medication:</strong> You may give Tylenol or Advil when your child has a confirmed fever <em>and</em> appears uncomfortable, irritable, or is having difficulty sleeping or eating. A fever alone does not always require medication — it is part of the body's natural immune response. <strong>Seek medical attention if:</strong> your child is under 3 months with any fever, the fever lasts more than 5 days, your child appears very unwell or has difficulty breathing, a febrile seizure occurs, or you are concerned for any reason.
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="input-card">
+    <div>
+      <label>Child's Weight</label>
+      <div class="weight-row">
+        <input class="weight-input" id="weightInput" type="number" min="1" max="150" step="0.1" placeholder="—" oninput="calculate()">
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="btnKg" onclick="setUnit('kg')">kg</button>
+          <button class="unit-btn" id="btnLbs" onclick="setUnit('lbs')">lbs</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label>Age Group</label>
+      <button class="age-toggle-btn" id="ageToggle" onclick="toggleAge()">
+        <div class="check-circle" id="ageCheck"></div>
+        Child is under 6 months
+      </button>
+    </div>
+
+    <div class="dose-display" id="doseDisplayT">
+      <div class="dose-label">Tylenol dose</div>
+      <div class="dose-value" id="tylenolMgRange">— mg</div>
+      <div class="dose-sub">15 mg/kg per dose</div>
+    </div>
+    <div class="dose-display" id="doseDisplayA">
+      <div class="dose-label">Advil dose</div>
+      <div class="dose-value" id="advilMgRange">— mg</div>
+      <div class="dose-sub">10 mg/kg per dose</div>
+    </div>
+
+    <div class="input-age-note hidden" id="inputAgeNote"></div>
+  </div>
+
+  <!-- MAX BANNER -->
+  <div class="max-banner">
+    <div class="max-item">
+      <div class="max-label">Tylenol — Max Single Dose</div>
+      <div class="max-val" id="maxTylenolDose">— mg</div>
+      <div class="max-sub">Absolute max 1,000 mg/dose</div>
+    </div>
+    <div class="max-item">
+      <div class="max-label">Tylenol — Max Daily</div>
+      <div class="max-val" id="maxTylenolDay">— mg/day</div>
+      <div class="max-sub">Every 4–6 h · max 5 doses/day</div>
+    </div>
+    <div class="max-item" id="maxAdvilDoseItem">
+      <div class="max-label">Advil — Max Single Dose</div>
+      <div class="max-val" id="maxAdvilDose">— mg</div>
+      <div class="max-sub">Absolute max 600 mg/dose</div>
+    </div>
+    <div class="max-item" id="maxAdvilDayItem">
+      <div class="max-label">Advil — Max Daily</div>
+      <div class="max-val" id="maxAdvilDay">— mg/day</div>
+      <div class="max-sub">Every 6–8 h · max 4 doses/day</div>
+    </div>
+  </div>
+
+  <!-- TYLENOL -->
+  <div class="drug-section">
+    <div class="drug-header">
+      <div class="drug-badge badge-tylenol">Tylenol®</div>
+      <div class="drug-generic">Acetaminophen</div>
+      <div class="drug-dose-range">Dose: <strong>15 mg/kg</strong> · q4–6h · max 5×/day</div>
+    </div>
+    <div class="dose-table-wrap">
+      <table class="dose-table tylenol">
+        <thead>
+          <tr>
+            <th style="width:30%">Formulation</th>
+            <th style="width:18%" class="col-amount">Give This Amount</th>
+            <th style="width:26%">How Often</th>
+            <th style="width:26%">Who It's For</th>
+          </tr>
+        </thead>
+        <tbody id="tylenolGrid"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ADVIL (≥ 6 mo) -->
+  <div id="advilSection">
+    <div class="drug-section">
+      <div class="drug-header">
+        <div class="drug-badge badge-advil">Advil® / Motrin®</div>
+        <div class="drug-generic">Ibuprofen — <em>≥ 6 months only</em></div>
+        <div class="drug-dose-range">Dose: <strong>10 mg/kg</strong> · q6–8h · max 4×/day</div>
+      </div>
+      <div class="dose-table-wrap">
+        <table class="dose-table advil">
+          <thead>
+            <tr>
+              <th style="width:30%">Formulation</th>
+              <th style="width:18%" class="col-amount">Give This Amount</th>
+              <th style="width:26%">How Often</th>
+              <th style="width:26%">Who It's For</th>
+            </tr>
+          </thead>
+          <tbody id="advilGrid"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVIL WARNING (< 6 mo) -->
+  <div class="advil-warning" id="advilWarning">
+    <div class="advil-warning-icon">⚠️</div>
+    <div>
+      <h3>Ibuprofen (Advil / Motrin) is NOT safe for infants under 6 months of age</h3>
+      <p>
+        Ibuprofen should <strong>not</strong> be given to any child younger than 6 months old. For fever management in infants under 6 months, <strong>Acetaminophen (Tylenol) is the only recommended over-the-counter option</strong> — and only with physician guidance for newborns under 3 months of age.<br><br>
+        <strong>Important:</strong> If your infant under 6 months has a fever ≥ 38.0°C (rectal), <strong>contact your doctor or go to the emergency department promptly.</strong> Fever in young infants can indicate serious infection and requires immediate medical evaluation.
+      </p>
+    </div>
+  </div>
+
+  <!-- STAGGERED SCHEDULE (≥ 6 mo only) -->
+  <div class="schedule-section" id="scheduleSection">
+    <div class="schedule-header">Example Dosing Schedule — Starting at 8:00 AM</div>
+    <div class="schedule-tabs">
+      <button class="sched-tab active" onclick="setSchedule('staggered')">Staggered (Recommended)</button>
+      <button class="sched-tab" onclick="setSchedule('tylenol')">Tylenol Only</button>
+      <button class="sched-tab" onclick="setSchedule('alternating')">Full Alternating</button>
+    </div>
+    <div class="schedule-card sched-panel active-panel" id="panel-staggered">
+      <h4>Staggered Tylenol + Advil — 3 hours apart</h4>
+      <div class="sched-desc">Give Tylenol first, then Advil 3 hours later, and continue alternating. This provides more continuous fever control than either drug alone. Each drug still respects its own minimum interval: Tylenol every 4 h minimum, Advil every 6 h minimum.</div>
+      <div class="timeline" id="staggered-tl"></div>
+    </div>
+    <div class="schedule-card sched-panel" id="panel-tylenol" style="display:none">
+      <h4>Tylenol Only — every 4–6 hours</h4>
+      <div class="sched-desc">Use when Advil is unavailable, not tolerated, or your physician recommends Tylenol only. Give every 4 hours as needed (maximum 5 doses in 24 hours).</div>
+      <div class="timeline" id="tylenol-tl"></div>
+    </div>
+    <div class="schedule-card sched-panel" id="panel-alternating" style="display:none">
+      <h4>Alternating every 4 hours</h4>
+      <div class="sched-desc">Strictly alternating drugs every 4 hours. Each drug is given every 8 hours (well within its maximum frequency). Keep a written log to avoid accidentally doubling a dose.</div>
+      <div class="timeline" id="alternating-tl"></div>
+    </div>
+  </div>
+
+  <!-- SAFETY NOTES -->
+  <div class="safety-grid">
+    <div class="safety-card tylenol-safe">
+      <h4>Acetaminophen — Key Points</h4>
+      <ul>
+        <li>Safe from birth (physician guidance for &lt; 3 months)</li>
+        <li>Every 4–6 hours as needed; max 5 doses/24 h</li>
+        <li>Do <strong>not</strong> exceed 75 mg/kg/day (max 4,000 mg/day)</li>
+        <li>Avoid with liver (hepatic) problems</li>
+        <li>Check cold/flu combination products for hidden acetaminophen</li>
+      </ul>
+    </div>
+    <div class="safety-card advil-safe" id="advilSafetyCard">
+      <h4>Ibuprofen — Key Points</h4>
+      <ul>
+        <li><strong>Not for infants &lt; 6 months</strong></li>
+        <li>Every 6–8 hours as needed; max 4 doses/24 h</li>
+        <li>Do not exceed 40 mg/kg/day (max 2,400 mg/day)</li>
+        <li>Give with food or milk to reduce stomach upset</li>
+        <li>Avoid if dehydrated, or with kidney or bleeding problems</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Disclaimer:</strong> This sheet is a clinical reference aid. Doses are based on standard weight-based guidelines (acetaminophen 15 mg/kg/dose; ibuprofen 10 mg/kg/dose). Individual patient factors including age, organ function, concurrent medications, and clinical context must always be considered. Verify with current formulary guidelines (e.g. CPS, SickKids Drug Handbook). This tool does not replace clinical judgment. Formulations listed are representative Canadian market products — always confirm label concentration before dispensing.
+  </footer>
+
+</div>
+
+<script>
+  let unit = 'kg';
+  let under6mo = false;
+  let activeSchedule = 'staggered';
+
+  const tylenolForms = [
+    { name: 'Infant Drops',      conc: 80,  concLabel: '80 mg/mL',     unitOut: 'mL',      note: 'Concentrated drops' },
+    { name: "Children's Liquid", conc: 32,  concLabel: '32 mg/mL',     unitOut: 'mL',      note: 'Ages 2–11 y' },
+    { name: 'Chewable 80 mg',    conc: 80,  concLabel: '80 mg/tablet', unitOut: 'tablets', perUnit: 80,  note: 'Ages 2–11 y' },
+    { name: 'Junior Tablets',    conc: 160, concLabel: '160 mg/tablet',unitOut: 'tablets', perUnit: 160, note: 'Ages 6–11 y' },
+    { name: 'Regular Strength',  conc: 325, concLabel: '325 mg/tablet',unitOut: 'tablets', perUnit: 325, note: 'Older child / adult' },
+    { name: 'Extra Strength',    conc: 500, concLabel: '500 mg/tablet',unitOut: 'tablets', perUnit: 500, note: 'Adult (≥ 12 y)' },
+    { name: 'Supp. 80 mg',       conc: 80,  concLabel: '80 mg each',   unitOut: 'supp',    perUnit: 80,  note: '3–11 months' },
+    { name: 'Supp. 160 mg',      conc: 160, concLabel: '160 mg each',  unitOut: 'supp',    perUnit: 160, note: '1–3 years' },
+  ];
+
+  const advilForms = [
+    { name: 'Infant Drops',      conc: 40,  concLabel: '40 mg/mL',     unitOut: 'mL',      note: '6–23 months' },
+    { name: "Children's Liquid", conc: 20,  concLabel: '20 mg/mL',     unitOut: 'mL',      note: 'Ages 2–11 y' },
+    { name: 'Chewable 100 mg',   conc: 100, concLabel: '100 mg/tablet',unitOut: 'tablets', perUnit: 100, note: 'Ages 2–11 y' },
+    { name: 'Junior Tablets',    conc: 200, concLabel: '200 mg/tablet',unitOut: 'tablets', perUnit: 200, note: 'Ages 6–11 y' },
+    { name: 'Tablets 200 mg',    conc: 200, concLabel: '200 mg/tablet',unitOut: 'tablets', perUnit: 200, note: 'Adolescent/adult' },
+    { name: 'Tablets 400 mg',    conc: 400, concLabel: '400 mg/tablet',unitOut: 'tablets', perUnit: 400, note: 'Adult / Rx' },
+  ];
+
+  function setUnit(u) {
+    unit = u;
+    document.getElementById('btnKg').classList.toggle('active', u === 'kg');
+    document.getElementById('btnLbs').classList.toggle('active', u === 'lbs');
+    calculate();
+  }
+
+  function getWeightKg() {
+    const raw = parseFloat(document.getElementById('weightInput').value);
+    if (isNaN(raw) || raw <= 0) return null;
+    return unit === 'lbs' ? raw * 0.453592 : raw;
+  }
+
+  function formatVolume(mL) {
+    if (mL < 0.1) return '< 0.1';
+    return mL < 1 ? mL.toFixed(2) : mL % 1 === 0 ? mL.toFixed(0) : mL.toFixed(1);
+  }
+
+  function formatTablets(n) {
+    const fracs = [[0.25,'¼'],[0.5,'½'],[0.75,'¾']];
+    const whole = Math.floor(n);
+    const frac = n - whole;
+    let bestLabel = null, bestDist = 1;
+    for (const [v, s] of fracs) {
+      const d = Math.abs(frac - v);
+      if (d < bestDist) { bestDist = d; bestLabel = s; }
+    }
+    if (bestDist < 0.13) return whole === 0 ? bestLabel : whole + ' ' + bestLabel;
+    return n.toFixed(1);
+  }
+
+  function toggleAge() {
+    under6mo = !under6mo;
+    document.getElementById('ageToggle').classList.toggle('under6', under6mo);
+    document.getElementById('ageCheck').textContent = under6mo ? '✓' : '';
+    calculate();
+  }
+
+  function setSchedule(name) {
+    activeSchedule = name;
+    document.querySelectorAll('.sched-tab').forEach((t, i) => {
+      t.classList.toggle('active', ['staggered','tylenol','alternating'][i] === name);
+    });
+    document.querySelectorAll('.sched-panel').forEach(p => {
+      const isActive = p.id === 'panel-' + name;
+      p.style.display = isActive ? 'block' : 'none';
+      p.classList.toggle('active-panel', isActive);
+    });
+  }
+
+  function buildSchedule(type) {
+    let rows = [];
+    if (type === 'staggered') {
+      rows = [
+        { time: '8:00 AM',  dotType: 't',    pills: [{cls:'t',label:'Tylenol'}], note: 'Start — give Tylenol' },
+        { time: '11:00 AM', dotType: 'a',    pills: [{cls:'a',label:'Advil'}],   note: '3 h later — give Advil' },
+        { time: '2:00 PM',  dotType: 't',    pills: [{cls:'t',label:'Tylenol'}], note: '3 h later — give Tylenol (6 h since last Tylenol ✓)' },
+        { time: '5:00 PM',  dotType: 'a',    pills: [{cls:'a',label:'Advil'}],   note: '3 h later — give Advil (6 h since last Advil ✓)' },
+        { time: '8:00 PM',  dotType: 't',    pills: [{cls:'t',label:'Tylenol'}], note: '3 h later — give Tylenol' },
+        { time: '11:00 PM', dotType: 'a',    pills: [{cls:'a',label:'Advil'}],   note: 'Last dose — reassess overnight need' },
+      ];
+    } else if (type === 'tylenol') {
+      rows = [
+        { time: '8:00 AM',  dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: 'Dose 1' },
+        { time: '12:00 PM', dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: 'Dose 2 — 4 h later' },
+        { time: '4:00 PM',  dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: 'Dose 3 — 4 h later' },
+        { time: '8:00 PM',  dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: 'Dose 4 — 4 h later' },
+        { time: '12:00 AM', dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: 'Dose 5 (max) — only if needed overnight' },
+      ];
+    } else {
+      rows = [
+        { time: '8:00 AM',  dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: 'Start — Tylenol' },
+        { time: '12:00 PM', dotType: 'a', pills: [{cls:'a',label:'Advil'}],   note: '4 h later — Advil' },
+        { time: '4:00 PM',  dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: '4 h later — Tylenol (8 h since last Tylenol ✓)' },
+        { time: '8:00 PM',  dotType: 'a', pills: [{cls:'a',label:'Advil'}],   note: '4 h later — Advil (8 h since last Advil ✓)' },
+        { time: '12:00 AM', dotType: 't', pills: [{cls:'t',label:'Tylenol'}], note: 'Only if needed — consider reassessing at this point' },
+      ];
+    }
+    return rows.map(r => {
+      const pillsHtml = r.pills.map(p => `<span class="tl-pill ${p.cls}">${p.label}</span>`).join('');
+      return `<div class="tl-row">
+        <div class="tl-time">${r.time}</div>
+        <div class="tl-spine">
+          <div class="tl-dot ${r.dotType}-dot"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-content">
+          <div class="tl-pills">${pillsHtml}</div>
+          <div class="tl-note">${r.note}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function buildRow(f, mgDose, drug, isEmpty) {
+    const amtCls = drug === 'tylenol' ? 'tylenol-amt' : 'advil-amt';
+    let amountStr = '—', unitStr = '';
+    if (!isEmpty && mgDose !== null) {
+      if (f.perUnit) {
+        amountStr = formatTablets(mgDose / f.perUnit);
+        unitStr = f.unitOut;
+      } else {
+        amountStr = formatVolume(mgDose / f.conc);
+        unitStr = 'mL';
+      }
+    }
+    const freq    = drug === 'tylenol' ? 'Every 4–6 hours' : 'Every 6–8 hours';
+    const maxDose = drug === 'tylenol' ? 'Max 5 doses/day' : 'Max 4 doses/day';
+
+    return `<tr>
+      <td>
+        <div class="td-formulation">${f.name}</div>
+        <div class="td-conc">${f.concLabel}</div>
+      </td>
+      <td style="text-align:center">
+        <div class="td-amount ${isEmpty ? 'pending' : amtCls}">${isEmpty ? '—' : amountStr}</div>
+        <div class="td-unit">${isEmpty ? 'Enter weight' : unitStr}</div>
+      </td>
+      <td>
+        <div class="td-freq">${freq}</div>
+        <div class="td-freq-sub">${maxDose}</div>
+      </td>
+      <td>
+        ${f.note ? `<span class="td-note-tag">${f.note}</span>` : '<span style="color:var(--rule);font-size:0.75rem;">—</span>'}
+      </td>
+    </tr>`;
+  }
+
+  function calculate() {
+    const wKg    = getWeightKg();
+    const isEmpty = wKg === null;
+    const tylenolMg = isEmpty ? null : Math.min(wKg * 15, 1000);
+    const advilMg   = isEmpty ? null : Math.min(wKg * 10, 600);
+
+    document.getElementById('tylenolMgRange').textContent = isEmpty ? '— mg' : tylenolMg.toFixed(0) + ' mg';
+    document.getElementById('advilMgRange').textContent   = isEmpty ? '— mg' : advilMg.toFixed(0) + ' mg';
+    document.getElementById('doseDisplayA').style.display = under6mo ? 'none' : '';
+
+    document.getElementById('maxTylenolDose').textContent = isEmpty ? '—' : tylenolMg.toFixed(0) + ' mg';
+    document.getElementById('maxTylenolDay').textContent  = isEmpty ? '—' : Math.min(tylenolMg * 5, 4000).toFixed(0) + ' mg/day';
+    document.getElementById('maxAdvilDose').textContent   = isEmpty ? '—' : advilMg.toFixed(0) + ' mg';
+    document.getElementById('maxAdvilDay').textContent    = isEmpty ? '—' : Math.min(advilMg * 4, 2400).toFixed(0) + ' mg/day';
+    document.getElementById('maxAdvilDoseItem').style.display = under6mo ? 'none' : '';
+    document.getElementById('maxAdvilDayItem').style.display  = under6mo ? 'none' : '';
+
+    // Weight < 5 kg nudge
+    const noteEl = document.getElementById('inputAgeNote');
+    if (!isEmpty && wKg < 5 && !under6mo) {
+      noteEl.className = 'input-age-note warn';
+      noteEl.innerHTML = '⚠️ Weight &lt; 5 kg detected — if this child is under 6 months, please toggle the age group above. Ibuprofen is contraindicated under 6 months.';
+    } else {
+      noteEl.className = 'input-age-note hidden';
+    }
+
+    // Show/hide advil & schedule
+    document.getElementById('advilSection').style.display   = under6mo ? 'none' : '';
+    document.getElementById('advilWarning').classList.toggle('show', under6mo);
+    document.getElementById('scheduleSection').style.display = under6mo ? 'none' : '';
+    document.getElementById('advilSafetyCard').style.display = under6mo ? 'none' : '';
+
+    // Render tables
+    document.getElementById('tylenolGrid').innerHTML = tylenolForms.map(f => buildRow(f, tylenolMg, 'tylenol', isEmpty)).join('');
+    if (!under6mo) {
+      document.getElementById('advilGrid').innerHTML = advilForms.map(f => buildRow(f, advilMg, 'advil', isEmpty)).join('');
+      ['staggered','tylenol','alternating'].forEach(type => {
+        const el = document.getElementById(type + '-tl');
+        if (el) el.innerHTML = buildSchedule(type);
+      });
+    }
+  }
+
+  calculate();
+</script>
+</body>
+</html>
