@@ -288,20 +288,46 @@ async function pinToToken(pin)  { return sha256hex('lt:' + pin); }
 async function hashForStorage(t){ return sha256hex('stored:' + t); }
 
 // ── PIN overlay ───────────────────────────────────────────────
-function boot() {
-  const hasPinHash = !!localStorage.getItem('lt_pin_hash');
-  if (hasPinHash) {
-    renderPinGate('Enter your PIN to continue.', 'Unlock', submitPin);
-  } else {
-    renderCreatePin();
+// PIN hash lives in Supabase (lift_settings key='pin_hash') so any
+// device just enters the PIN — no per-device setup ever.
+// localStorage caches the hash only to skip the network call on
+// repeat visits on the same device.
+
+async function boot() {
+  // Show the gate immediately so the screen isn't blank
+  renderPinGate('Enter your PIN to continue.');
+  // Fetch hash from Supabase (no auth needed — public read policy)
+  try {
+    const rows = await sbPublic('GET', '/rest/v1/lift_settings?key=eq.pin_hash&select=value');
+    if (rows && rows.length) {
+      // PIN exists — cache locally and show gate
+      localStorage.setItem('lt_pin_hash', rows[0].value);
+    } else {
+      // No PIN set anywhere yet — first-ever use
+      renderCreatePin();
+    }
+  } catch(_) {
+    // Network issue — fall back to local cache if available
+    if (!localStorage.getItem('lt_pin_hash')) renderCreatePin();
+    // else keep showing pin gate with local hash
   }
-  setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 100);
+  setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 80);
+}
+
+// Unauthenticated Supabase read (public policy, no x-app-token)
+async function sbPublic(method, path) {
+  const r = await fetch(SB_URL + path, {
+    method,
+    headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${SB_ANON}` },
+  });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
 }
 
 function renderCreatePin() {
   ovMode = 'create';
   document.getElementById('ov-title').textContent = 'Create a PIN';
-  document.getElementById('ov-sub').textContent   = 'Choose a 4–8 digit PIN. This is the only thing you\'ll need on any device.';
+  document.getElementById('ov-sub').textContent   = 'Choose a 4–8 digit PIN. You\'ll use this on every device — nothing else needed.';
   document.getElementById('ov-fields').innerHTML  = `
     <div class="field">
       <label>PIN (4–8 digits)</label>
@@ -319,7 +345,7 @@ function renderCreatePin() {
   setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 80);
 }
 
-function renderPinGate(sub, btnLabel, fn) {
+function renderPinGate(sub) {
   ovMode = 'pin';
   document.getElementById('ov-title').textContent = 'Lift tracker';
   document.getElementById('ov-sub').textContent   = sub;
@@ -329,9 +355,7 @@ function renderPinGate(sub, btnLabel, fn) {
              maxlength="8" placeholder="••••" autocomplete="off"
              onkeydown="if(event.key==='Enter')ovSubmit()">
     </div>`;
-  document.getElementById('ov-btn').textContent = btnLabel;
-  document.getElementById('ov-btn').onclick      = fn;
-  setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 80);
+  document.getElementById('ov-btn').textContent = 'Unlock';
 }
 
 function ovSubmit() {
@@ -344,23 +368,42 @@ async function createPin() {
   const b = (document.getElementById('f-pin2') || {}).value || '';
   if (a.length < 4) { ovErr('PIN must be at least 4 digits'); return; }
   if (a !== b)       { ovErr('PINs do not match'); return; }
+  setOvBtn(true, 'Creating…');
   appToken = await pinToToken(a);
-  localStorage.setItem('lt_pin_hash', await hashForStorage(appToken));
-  unlock();
+  const hash = await hashForStorage(appToken);
+  try {
+    // Store hash in Supabase — no token needed on first insert (empty table policy)
+    await sb('POST', '/rest/v1/lift_settings', { key: 'pin_hash', value: hash });
+    localStorage.setItem('lt_pin_hash', hash);
+    unlock();
+  } catch(e) {
+    ovErr('Could not save PIN — check connection');
+    setOvBtn(false, 'Create PIN');
+  }
 }
 
 async function submitPin() {
   const pin = (document.getElementById('f-pin') || {}).value || '';
   if (!pin) return;
+  setOvBtn(true, 'Checking…');
   const token = await pinToToken(pin);
   const hash  = await hashForStorage(token);
-  if (hash === localStorage.getItem('lt_pin_hash')) {
+  const stored = localStorage.getItem('lt_pin_hash');
+  if (hash === stored) {
     appToken = token;
     unlock();
   } else {
     ovErr('Incorrect PIN');
+    setOvBtn(false, 'Unlock');
     document.getElementById('f-pin').value = '';
+    setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 80);
   }
+}
+
+function setOvBtn(disabled, label) {
+  const b = document.getElementById('ov-btn');
+  b.disabled = disabled;
+  b.innerHTML = disabled ? `<span class="spin" style="border-top-color:#fff"></span>${label}` : label;
 }
 
 function ovErr(msg) {
@@ -385,16 +428,26 @@ async function saveNewPin() {
   if (a.length < 4) { e.textContent = 'PIN must be at least 4 digits'; return; }
   if (a !== b)       { e.textContent = 'PINs do not match'; return; }
   const newToken = await pinToToken(a);
+  const newHash  = await hashForStorage(newToken);
   setBtn('save-btn', true, 'Updating…');
   try {
-    // Refetch all rows, delete then re-insert with new token
+    // Re-token all session rows
     const rows = await sb('GET', '/rest/v1/lift_sessions?select=*&order=session_date.desc');
     for (const row of (rows||[])) {
       await sb('DELETE', `/rest/v1/lift_sessions?id=eq.${encodeURIComponent(row.id)}`);
       await sb('POST',   '/rest/v1/lift_sessions', {...row, app_token: newToken}, newToken);
     }
+    // Update PIN hash in settings (upsert)
+    await fetch(`${SB_URL}/rest/v1/lift_settings?key=eq.pin_hash`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SB_ANON, 'Authorization': `Bearer ${SB_ANON}`,
+        'Content-Type': 'application/json', 'x-app-token': appToken,
+      },
+      body: JSON.stringify({ value: newHash }),
+    });
     appToken = newToken;
-    localStorage.setItem('lt_pin_hash', await hashForStorage(newToken));
+    localStorage.setItem('lt_pin_hash', newHash);
     document.getElementById('new-pin-a').value = '';
     document.getElementById('new-pin-b').value = '';
     e.textContent = '';
