@@ -17,76 +17,59 @@
   --blue:#185FA5; --blue-bg:#E6F1FB; --blue-mid:#378ADD;
   --green:#3B6D11; --green-bg:#EAF3DE; --green-mid:#1D9E75;
   --red:#A32D2D; --red-bg:#FCEBEB;
-  --amber:#854F0B; --amber-bg:#FAEEDA;
   --r:8px; --rl:12px;
 }
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1c1c1a; --bg2:#252523; --bg3:#2e2e2b;
-    --text:#f0eeea; --text2:#9a9a94; --text3:#6b6b66;
-    --border:rgba(255,255,255,0.1); --border2:rgba(255,255,255,0.2);
-    --blue:#85B7EB; --blue-bg:#0C447C; --blue-mid:#378ADD;
-    --green:#97C459; --green-bg:#27500A; --green-mid:#1D9E75;
-    --red:#F09595; --red-bg:#791F1F;
-    --amber:#EF9F27; --amber-bg:#633806;
-  }
-}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1a; --bg2:#252523; --bg3:#2e2e2b;
+  --text:#f0eeea; --text2:#9a9a94; --text3:#6b6b66;
+  --border:rgba(255,255,255,0.1); --border2:rgba(255,255,255,0.2);
+  --blue:#85B7EB; --blue-bg:#0C447C; --blue-mid:#378ADD;
+  --green:#97C459; --green-bg:#27500A; --green-mid:#1D9E75;
+  --red:#F09595; --red-bg:#791F1F;
+}}
 *{box-sizing:border-box;margin:0;padding:0}
-html{font-size:15px}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
-
-/* ── Overlay ── */
 .overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem}
-.setup-box{width:100%;max-width:400px}
+.setup-box{width:100%;max-width:340px}
 .setup-box h2{font-size:20px;font-weight:500;margin-bottom:6px}
 .setup-box .sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
-.field{margin-bottom:12px}
+.field{margin-bottom:10px}
 .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px}
-.field input{width:100%;height:40px;padding:0 12px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:14px;outline:none}
-.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.12)}
-.field input::placeholder{color:var(--text3)}
-.field.pin-field input{font-size:22px;letter-spacing:8px;text-align:center}
-.primary-btn{width:100%;height:44px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;margin-top:4px}
+.pin-input{width:100%;height:60px;font-size:32px;letter-spacing:12px;text-align:center;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);outline:none;padding:0 12px}
+.pin-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.12)}
+.primary-btn{width:100%;height:46px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;margin-top:8px}
 .primary-btn:hover{opacity:.88}
 .primary-btn:active{transform:scale(.98)}
-.primary-btn:disabled{opacity:.45;cursor:not-allowed}
-.ov-err{font-size:13px;color:var(--red);text-align:center;min-height:20px;margin-top:8px}
-.hint-box{font-size:12px;color:var(--text3);margin-top:1rem;line-height:1.7;padding:10px 14px;background:var(--bg2);border-radius:var(--r)}
-.hint-box a{color:var(--blue)}
-.hint-box b{color:var(--text2)}
-.hint-box code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:11px;color:var(--text)}
-
-/* ── App layout ── */
+.primary-btn:disabled{opacity:.4;cursor:not-allowed}
+.ov-err{font-size:13px;color:var(--red);text-align:center;min-height:20px;margin-top:10px}
 .container{max-width:720px;margin:0 auto;padding:1.5rem 1rem 5rem}
 .topbar{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
-.topbar h1{font-size:19px;font-weight:500;flex:1;min-width:120px}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.topbar h1{font-size:19px;font-weight:500;flex:1}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
 .sync-dot.ok{background:var(--green-mid)}
 .sync-dot.err{background:var(--red)}
 .sync-lbl{font-size:12px;color:var(--text3)}
-.settings-btn{background:none;border:0.5px solid var(--border);border-radius:var(--r);padding:5px 12px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap}
+.settings-btn{background:none;border:0.5px solid var(--border);border-radius:var(--r);padding:5px 12px;font-size:12px;color:var(--text2);cursor:pointer}
 .settings-btn:hover{background:var(--bg2)}
-
-/* ── Settings panel ── */
-.settings-panel{display:none;background:var(--bg2);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1rem;border:0.5px solid var(--border)}
-.settings-panel.open{display:block}
-.settings-panel h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:10px}
-.cfg-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border)}
+.panel{display:none;background:var(--bg2);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1rem;border:0.5px solid var(--border)}
+.panel.open{display:block}
+.panel h3{font-size:13px;font-weight:500;margin-bottom:10px}
+.cfg-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);flex-wrap:wrap}
 .cfg-row:last-child{border-bottom:none}
 .cfg-row span{font-size:13px;color:var(--text2);flex:1}
-.cfg-row code{font-size:11px;background:var(--bg3);padding:2px 7px;border-radius:4px;color:var(--text)}
 .icon-btn{background:none;border:0.5px solid var(--border);border-radius:var(--r);padding:4px 10px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap}
 .icon-btn:hover{background:var(--bg)}
-.icon-btn.danger:hover{border-color:var(--red);color:var(--red)}
-
-/* ── Stats ── */
+.icon-btn.d:hover{border-color:var(--red);color:var(--red)}
+.unit-row{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
+.unit-row span{font-size:13px;color:var(--text2)}
+.unit-toggle{display:flex;border:0.5px solid var(--border2);border-radius:var(--r);overflow:hidden}
+.u-btn{padding:5px 16px;font-size:13px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--text3)}
+.u-btn.active{background:var(--bg2);color:var(--text)}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:1.25rem}
 .stat{background:var(--bg2);border-radius:var(--r);padding:.7rem 1rem}
 .stat-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
 .stat-val{font-size:17px;font-weight:500;color:var(--text)}
 .stat-val.blue{color:var(--blue)}
-
-/* ── Progress ── */
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1rem}
 .card-title{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1rem}
 .prog-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
@@ -104,21 +87,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ms-sub{font-size:10px;color:var(--text3);margin-top:1px}
 .ms.reached .ms-sub{color:var(--green-mid)}
 .ms.next .ms-sub{color:var(--blue)}
-
-/* ── Form ── */
-.unit-row{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
-.unit-row span{font-size:13px;color:var(--text2)}
-.unit-toggle{display:flex;border:0.5px solid var(--border2);border-radius:var(--r);overflow:hidden}
-.u-btn{padding:5px 16px;font-size:13px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--text3)}
-.u-btn.active{background:var(--bg2);color:var(--text)}
 .meta-row{display:grid;grid-template-columns:150px 1fr;gap:10px;margin-bottom:1rem}
 .fl{font-size:12px;color:var(--text2);display:block;margin-bottom:4px}
 input.fi,select.fi{width:100%;height:36px;padding:0 10px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:13px;outline:none;-webkit-appearance:none;appearance:none}
 input.fi:focus,select.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.1)}
 input.fi::placeholder{color:var(--text3)}
-
-/* ── Exercise items ── */
-.ex-item{border:0.5px solid var(--border);border-radius:var(--rl);padding:10px 12px;margin-bottom:8px;background:var(--bg)}
+.ex-item{border:0.5px solid var(--border);border-radius:var(--rl);padding:10px 12px;margin-bottom:8px}
 .ex-name-row{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;margin-bottom:8px}
 .ex-link{font-size:11px;color:var(--blue);text-decoration:none;padding:4px 8px;border:0.5px solid var(--border2);border-radius:var(--r);white-space:nowrap;background:var(--blue-bg)}
 .ex-link:hover{opacity:.8}
@@ -136,11 +110,8 @@ input.fi::placeholder{color:var(--text3)}
 .set-actions{display:flex;gap:6px;margin-top:4px}
 .add-set-btn{flex:1;height:28px;border:0.5px dashed var(--border2);border-radius:var(--r);background:none;color:var(--blue);font-size:12px;cursor:pointer}
 .add-set-btn:hover{background:var(--blue-bg)}
-
 .add-ex-btn{width:100%;height:34px;border:0.5px dashed var(--border2);border-radius:var(--r);background:none;color:var(--blue);font-size:13px;cursor:pointer;margin-top:4px}
 .add-ex-btn:hover{background:var(--blue-bg)}
-
-/* ── Session footer ── */
 .sess-footer{display:flex;align-items:center;gap:14px;margin-top:1rem;padding-top:.75rem;border-top:0.5px solid var(--border)}
 .live-lbl{font-size:12px;color:var(--text2)}
 .live-val{font-size:21px;font-weight:500;color:var(--blue)}
@@ -148,8 +119,6 @@ input.fi::placeholder{color:var(--text3)}
 .save-btn:hover{background:var(--bg2)}
 .save-btn:active{transform:scale(.98)}
 .save-btn:disabled{opacity:.5;cursor:not-allowed}
-
-/* ── History ── */
 .sess-item{display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
 .sess-item:last-child{border-bottom:none}
 .si-date{font-size:13px;color:var(--text2);min-width:76px;flex-shrink:0}
@@ -158,68 +127,75 @@ input.fi::placeholder{color:var(--text3)}
 .si-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 4px;flex-shrink:0}
 .si-del:hover{color:var(--red)}
 .empty{font-size:13px;color:var(--text3);text-align:center;padding:1.5rem 0}
-
-/* ── Toast ── */
 .toast{display:none;border-radius:var(--r);font-size:13px;padding:9px 14px;margin-bottom:1rem}
 .toast.ok{display:block;background:var(--green-bg);color:var(--green)}
 .toast.err{display:block;background:var(--red-bg);color:var(--red)}
-.toast.warn{display:block;background:var(--amber-bg);color:var(--amber)}
-
-/* ── Spinner ── */
-.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:5px}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes sp{to{transform:rotate(360deg)}}
-
 @media(max-width:520px){
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .meta-row{grid-template-columns:1fr}
-  .milestones{grid-template-columns:repeat(4,minmax(0,1fr))}
   .ex-name-row{grid-template-columns:1fr auto}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ OVERLAY ══════════════════════════════════════════════ -->
+<!-- PIN OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="setup-box">
     <h2 id="ov-title">Lift tracker</h2>
-    <p class="sub" id="ov-sub">Checking configuration…</p>
-    <div id="ov-fields"></div>
-    <button class="primary-btn" id="ov-btn" onclick="ovAction()" disabled>Continue</button>
+    <p class="sub" id="ov-sub">Enter your PIN to continue.</p>
+    <div id="ov-fields">
+      <div class="field">
+        <input class="pin-input" id="f-pin" type="password" inputmode="numeric"
+               maxlength="8" placeholder="••••" autocomplete="off"
+               onkeydown="if(event.key==='Enter')ovSubmit()">
+      </div>
+    </div>
+    <button class="primary-btn" id="ov-btn" onclick="ovSubmit()">Unlock</button>
     <div class="ov-err" id="ov-err"></div>
-    <div id="ov-hint"></div>
   </div>
 </div>
 
-<!-- ══ APP ═══════════════════════════════════════════════════ -->
+<!-- APP -->
 <div class="container" id="app" style="display:none">
-
   <div class="topbar">
     <h1>Lift tracker</h1>
     <div class="sync-dot" id="sync-dot"></div>
     <span class="sync-lbl" id="sync-lbl"></span>
-    <button class="settings-btn" onclick="toggleSettings()">Settings</button>
+    <button class="settings-btn" onclick="togglePanel('settings-panel')">Settings</button>
   </div>
 
-    <div class="settings-panel" id="settings-panel">
-    <h3>Configuration</h3>
-    <div class="cfg-row"><span>Repo</span><code id="cfg-repo-lbl">—</code></div>
-    <div class="cfg-row"><span>Token</span><code>••••••••••••</code><button class="icon-btn danger" onclick="resetCreds()">Clear token</button></div>
-    <div class="cfg-row"><span>PIN</span><code>stored as hash</code><button class="icon-btn danger" onclick="resetAll()">Reset everything</button></div>
-    <div class="cfg-row" style="border-bottom:none;margin-top:4px;flex-wrap:wrap;gap:6px">
-      <span style="font-size:12px;color:var(--text3)">Data file: <code id="cfg-file-lbl">—</code></span>
-      <button class="icon-btn" onclick="loadRemote(true)">Force sync</button>
+  <div class="panel" id="settings-panel">
+    <h3>Settings</h3>
+    <div class="cfg-row">
+      <span>Change PIN</span>
+      <button class="icon-btn" onclick="togglePanel('pin-panel')">Change PIN</button>
     </div>
-    <div style="margin-top:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--r);font-size:12px;color:var(--text3);line-height:1.6">
-      <b style="color:var(--text2)">Add to home screen (iOS):</b> tap the Share button in Safari → "Add to Home Screen". This gives the app persistent storage so you only need to enter your token once per device.
+    <div class="cfg-row" style="border:none">
+      <span style="font-size:12px;color:var(--text3)">Data syncs via Supabase. Open on any device and enter your PIN — nothing else needed.</span>
+      <button class="icon-btn" onclick="loadSessions(true)">Force sync</button>
     </div>
+  </div>
+
+  <div class="panel" id="pin-panel">
+    <h3>Change PIN</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:flex-end">
+      <div><label class="fl">New PIN</label>
+        <input class="fi" id="new-pin-a" type="password" inputmode="numeric" maxlength="8" placeholder="••••"></div>
+      <div><label class="fl">Confirm</label>
+        <input class="fi" id="new-pin-b" type="password" inputmode="numeric" maxlength="8" placeholder="••••"></div>
+      <button class="save-btn" style="margin:0" onclick="saveNewPin()">Save</button>
+    </div>
+    <div class="ov-err" id="pin-chg-err" style="text-align:left;margin-top:6px"></div>
   </div>
 
   <div class="unit-row">
     <span>Units</span>
     <div class="unit-toggle">
       <button class="u-btn" id="u-lbs" onclick="setUnit('lbs')">lbs</button>
-      <button class="u-btn" id="u-kg" onclick="setUnit('kg')">kg</button>
+      <button class="u-btn" id="u-kg"  onclick="setUnit('kg')">kg</button>
     </div>
     <span id="unit-goal-lbl" style="font-size:12px;color:var(--text3)"></span>
   </div>
@@ -261,687 +237,429 @@ input.fi::placeholder{color:var(--text3)}
     <div class="card-title">History</div>
     <div id="history"></div>
   </div>
-
-</div><!-- /app -->
+</div>
 
 <script>
-// ════════════════════════════════════════════════════════════
-//  CONFIG
-// ════════════════════════════════════════════════════════════
+// ── Config ────────────────────────────────────────────────────
+const SB_URL  = 'https://sljfwscxeyzbmqrjtlrf.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsamZ3c2N4ZXl6Ym1xcmp0bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNDM4MDQsImV4cCI6MjA5MDYxOTgwNH0.uv5qiXH1-z49scE8PMWuKsTxfzk86NMqsG_hjAJze6s';
+
+// ── Constants ─────────────────────────────────────────────────
 const GOAL_LBS = 1_000_000;
-const DATA_FILE = 'sessions.json';
-const GITHUB_API = 'https://api.github.com';
-
 const MILESTONES = [
-  { lbs: 10_000,   label: '10K' },
-  { lbs: 50_000,   label: '50K' },
-  { lbs: 100_000,  label: '100K' },
-  { lbs: 250_000,  label: '250K' },
-  { lbs: 500_000,  label: '500K' },
-  { lbs: 750_000,  label: '750K' },
-  { lbs: 900_000,  label: '900K' },
-  { lbs: 1_000_000,label: '1M' },
+  {lbs:10000,label:'10K'},{lbs:50000,label:'50K'},{lbs:100000,label:'100K'},
+  {lbs:250000,label:'250K'},{lbs:500000,label:'500K'},{lbs:750000,label:'750K'},
+  {lbs:900000,label:'900K'},{lbs:1000000,label:'1M'},
 ];
-
 const EXERCISES = [
-  { name: 'Goblet squat (KB)',         url: 'https://www.youtube.com/results?search_query=goblet+squat+kettlebell+form' },
-  { name: 'KB swing',                  url: 'https://www.youtube.com/results?search_query=kettlebell+swing+form' },
-  { name: 'Romanian deadlift',         url: 'https://www.youtube.com/results?search_query=romanian+deadlift+dumbbell+form' },
-  { name: 'Reverse lunge',             url: 'https://www.youtube.com/results?search_query=dumbbell+reverse+lunge+form' },
-  { name: 'Single-leg glute bridge',   url: 'https://www.youtube.com/results?search_query=single+leg+glute+bridge' },
-  { name: 'Dumbbell bench press',      url: 'https://www.youtube.com/results?search_query=dumbbell+bench+press+form' },
-  { name: 'Push-up (bodyweight)',      url: 'https://www.youtube.com/results?search_query=perfect+push+up+form' },
-  { name: 'Dumbbell row',              url: 'https://www.youtube.com/results?search_query=dumbbell+row+form' },
-  { name: 'Shoulder press',            url: 'https://www.youtube.com/results?search_query=dumbbell+shoulder+press+form' },
-  { name: 'Bicep curl',                url: 'https://www.youtube.com/results?search_query=dumbbell+bicep+curl+form' },
-  { name: 'Tricep extension',          url: 'https://www.youtube.com/results?search_query=dumbbell+tricep+extension+form' },
-  { name: 'KB halo',                   url: 'https://www.youtube.com/results?search_query=kettlebell+halo+form' },
-  { name: 'Plank (bodyweight)',        url: 'https://www.youtube.com/results?search_query=plank+form+core' },
-  { name: 'Dead bug (bodyweight)',     url: 'https://www.youtube.com/results?search_query=dead+bug+exercise+form' },
-  { name: 'Pull-up (bodyweight)',      url: 'https://www.youtube.com/results?search_query=pull+up+form+beginners' },
-  { name: 'Band clamshell',            url: 'https://www.youtube.com/results?search_query=band+clamshell+form' },
-  { name: 'Other',                     url: '' },
+  {name:'Goblet squat (KB)',url:'https://www.youtube.com/results?search_query=goblet+squat+kettlebell+form'},
+  {name:'KB swing',url:'https://www.youtube.com/results?search_query=kettlebell+swing+form'},
+  {name:'Romanian deadlift',url:'https://www.youtube.com/results?search_query=romanian+deadlift+dumbbell+form'},
+  {name:'Reverse lunge',url:'https://www.youtube.com/results?search_query=dumbbell+reverse+lunge+form'},
+  {name:'Single-leg glute bridge',url:'https://www.youtube.com/results?search_query=single+leg+glute+bridge'},
+  {name:'Dumbbell bench press',url:'https://www.youtube.com/results?search_query=dumbbell+bench+press+form'},
+  {name:'Push-up (bodyweight)',url:'https://www.youtube.com/results?search_query=perfect+push+up+form'},
+  {name:'Dumbbell row',url:'https://www.youtube.com/results?search_query=dumbbell+row+form'},
+  {name:'Shoulder press',url:'https://www.youtube.com/results?search_query=dumbbell+shoulder+press+form'},
+  {name:'Bicep curl',url:'https://www.youtube.com/results?search_query=dumbbell+bicep+curl+form'},
+  {name:'Tricep extension',url:'https://www.youtube.com/results?search_query=dumbbell+tricep+extension+form'},
+  {name:'KB halo',url:'https://www.youtube.com/results?search_query=kettlebell+halo+form'},
+  {name:'Plank (bodyweight)',url:'https://www.youtube.com/results?search_query=plank+form+core'},
+  {name:'Dead bug (bodyweight)',url:'https://www.youtube.com/results?search_query=dead+bug+exercise+form'},
+  {name:'Pull-up (bodyweight)',url:'https://www.youtube.com/results?search_query=pull+up+form+beginners'},
+  {name:'Band clamshell',url:'https://www.youtube.com/results?search_query=band+clamshell+form'},
+  {name:'Other',url:''},
 ];
-const BW_NAMES = ['Push-up (bodyweight)', 'Plank (bodyweight)', 'Dead bug (bodyweight)', 'Pull-up (bodyweight)'];
-const BW_LBS = 215;
-const BW_KG  = 97.5;
+const BW_NAMES = ['Push-up (bodyweight)','Plank (bodyweight)','Dead bug (bodyweight)','Pull-up (bodyweight)'];
+const BW_LBS = 215, BW_KG = 97.5;
 
-// ════════════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════════════
-let cfg   = { repo: '', token: '', pin: '' };
-let unit  = 'lbs';
-let sessions  = [];
-let fileSHA   = '';    // GitHub blob SHA, needed for updates
-let exCounter = 0;
-let ovMode    = 'loading'; // 'setup' | 'pin' | 'loading'
-let ovBtnAction = null;
+// ── State ─────────────────────────────────────────────────────
+let unit = localStorage.getItem('lt_unit') || 'lbs';
+let sessions = [], appToken = '', exCounter = 0, ovMode = 'pin';
 
-// ════════════════════════════════════════════════════════════
-//  LOCAL STORAGE
-// ════════════════════════════════════════════════════════════
-// cfg is stored in two separate keys so the PIN (which never changes)
-// survives an iOS localStorage purge independently from the token.
-// lt_pin  — hashed PIN (SHA-256 hex) — rarely cleared
-// lt_cred — { repo, tok (base64) }   — re-entered on new device if cleared
-// lt_unit — 'lbs' | 'kg'
+// ── Crypto helpers ────────────────────────────────────────────
+async function sha256hex(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+// token = sha256(pin)  — sent as x-app-token header, matched against DB rows
+// stored hash = sha256(token) — never store the raw token locally
+async function pinToToken(pin)  { return sha256hex('lt:' + pin); }
+async function hashForStorage(t){ return sha256hex('stored:' + t); }
 
-async function hashPin(p) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-function saveCfg() {
-  localStorage.setItem('lt_cred', JSON.stringify({ repo: cfg.repo, tok: btoa(cfg.token) }));
-  // PIN hash is saved separately and only once
-}
-async function savePinHash(pin) {
-  localStorage.setItem('lt_pin', await hashPin(pin));
-}
-function loadCfg() {
-  try {
-    const c = JSON.parse(localStorage.getItem('lt_cred') || '{}');
-    cfg.repo  = c.repo || '';
-    cfg.token = c.tok  ? atob(c.tok) : '';
-  } catch(_) {}
-  cfg.pinHash = localStorage.getItem('lt_pin') || '';
-  unit = localStorage.getItem('lt_unit') || 'lbs';
-}
-function resetAll() {
-  if (!confirm('Reset all configuration? You will need to re-enter your GitHub token and PIN.')) return;
-  ['lt_cred','lt_pin','lt_unit'].forEach(k => localStorage.removeItem(k));
-  location.reload();
-}
-function resetCreds() {
-  if (!confirm('Clear saved token? You will re-enter it on next load (PIN is preserved).')) return;
-  localStorage.removeItem('lt_cred');
-  location.reload();
-}
-
-// ════════════════════════════════════════════════════════════
-//  OVERLAY FLOW
-// ════════════════════════════════════════════════════════════
-// ── Overlay modes ────────────────────────────────────────────
-// 'first'  — no PIN ever set: ask repo + PAT + create PIN
-// 'device' — PIN set, but creds missing (new device or iOS cleared them)
-// 'pin'    — everything cached, just ask PIN
-
-function ovErr(msg) {
-  document.getElementById('ov-err').textContent = msg;
-  setTimeout(() => { document.getElementById('ov-err').textContent = ''; }, 4000);
-}
-function ovBtnState(disabled, label) {
-  const b = document.getElementById('ov-btn');
-  b.disabled = disabled;
-  b.innerHTML = disabled && label.startsWith('…')
-    ? '<span class="spin"></span>' + label
-    : label;
-}
-function ovAction() { if (ovBtnAction) ovBtnAction(); }
-
-function showFirstSetup() {
-  ovMode = 'first';
-  document.getElementById('ov-title').textContent = 'Setup';
-  document.getElementById('ov-sub').textContent   = 'Connect a private GitHub repo to store your lift data.';
-  document.getElementById('ov-fields').innerHTML  = `
-    <div class="field"><label>GitHub username</label>
-      <input id="f-user" type="text" placeholder="greybeardmag" autocomplete="off" oninput="checkSetupForm()"></div>
-    <div class="field"><label>Private repo name</label>
-      <input id="f-repo" type="text" placeholder="lift-data" autocomplete="off" oninput="checkSetupForm()"></div>
-    <div class="field"><label>Personal Access Token (PAT)</label>
-      <input id="f-tok" type="password" placeholder="github_pat_…" autocomplete="off" oninput="checkSetupForm()"></div>
-    <div class="field pin-field"><label>Create a PIN (4–8 digits)</label>
-      <input id="f-pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••"
-             autocomplete="off" oninput="checkSetupForm()" onkeydown="if(event.key==='Enter')ovAction()"></div>`;
-  document.getElementById('ov-hint').innerHTML = `
-    <div class="hint-box">
-      <b>How to create your PAT:</b><br>
-      1. <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub → Settings → Developer settings → Fine-grained tokens</a><br>
-      2. Generate new token → choose your <code>lift-data</code> repo<br>
-      3. Permissions → Contents → <b>Read and write</b><br>
-      4. Generate and paste above
-    </div>`;
-  ovBtnAction = doFirstSetup;
-  document.getElementById('ov-btn').textContent = 'Connect & continue';
-  document.getElementById('ov-btn').disabled    = true;
-}
-
-function showDeviceSetup() {
-  // PIN already set on another device — just need repo + PAT for this device
-  ovMode = 'device';
-  document.getElementById('ov-title').textContent = 'Connect this device';
-  document.getElementById('ov-sub').textContent   = 'Your PIN is already set. Enter your repo and token to connect this device, then you\'ll just need your PIN going forward.';
-  document.getElementById('ov-fields').innerHTML  = `
-    <div class="field"><label>GitHub username</label>
-      <input id="f-user" type="text" placeholder="greybeardmag" autocomplete="off" oninput="checkDeviceForm()"></div>
-    <div class="field"><label>Private repo name</label>
-      <input id="f-repo" type="text" placeholder="lift-data" autocomplete="off" oninput="checkDeviceForm()"></div>
-    <div class="field"><label>Personal Access Token (PAT)</label>
-      <input id="f-tok" type="password" placeholder="github_pat_…" autocomplete="off" oninput="checkDeviceForm()"
-             onkeydown="if(event.key==='Enter')ovAction()"></div>`;
-  document.getElementById('ov-hint').innerHTML = `
-    <div class="hint-box">
-      This is a one-time step per device. After this, only your PIN is needed each visit.
-    </div>`;
-  ovBtnAction = doDeviceSetup;
-  document.getElementById('ov-btn').textContent = 'Connect device';
-  document.getElementById('ov-btn').disabled    = true;
-}
-
-function checkSetupForm() {
-  const ok = v('f-user') && v('f-repo') && v('f-tok') && v('f-pin').length >= 4;
-  document.getElementById('ov-btn').disabled = !ok;
-}
-function checkDeviceForm() {
-  const ok = v('f-user') && v('f-repo') && v('f-tok');
-  document.getElementById('ov-btn').disabled = !ok;
-}
-
-async function doFirstSetup() {
-  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok').trim(), pin = v('f-pin');
-  if (!user || !repo || !tok || pin.length < 4) { ovErr('Fill in all fields (PIN ≥ 4 digits)'); return; }
-  ovBtnState(true, '…Verifying');
-  const fullRepo = `${user}/${repo}`;
-  const result = await testGitHubToken(fullRepo, tok);
-  if (!result.ok) {
-    ovBtnState(false, 'Connect & continue');
-    ovErr(result.msg);
-    return;
+// ── PIN overlay ───────────────────────────────────────────────
+function boot() {
+  const hasPinHash = !!localStorage.getItem('lt_pin_hash');
+  if (hasPinHash) {
+    renderPinGate('Enter your PIN to continue.', 'Unlock', submitPin);
+  } else {
+    renderCreatePin();
   }
-  cfg.repo  = fullRepo;
-  cfg.token = tok;
-  saveCfg();
-  await savePinHash(pin);
-  cfg.pinHash = localStorage.getItem('lt_pin');
-  await startApp();
+  setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 100);
 }
 
-async function doDeviceSetup() {
-  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok').trim();
-  if (!user || !repo || !tok) { ovErr('Fill in all fields'); return; }
-  ovBtnState(true, '…Verifying');
-  const fullRepo = `${user}/${repo}`;
-  const result = await testGitHubToken(fullRepo, tok);
-  if (!result.ok) {
-    ovBtnState(false, 'Connect device');
-    ovErr(result.msg);
-    return;
-  }
-  cfg.repo  = fullRepo;
-  cfg.token = tok;
-  saveCfg();
-  showPinGate();
+function renderCreatePin() {
+  ovMode = 'create';
+  document.getElementById('ov-title').textContent = 'Create a PIN';
+  document.getElementById('ov-sub').textContent   = 'Choose a 4–8 digit PIN. This is the only thing you\'ll need on any device.';
+  document.getElementById('ov-fields').innerHTML  = `
+    <div class="field">
+      <label>PIN (4–8 digits)</label>
+      <input class="pin-input" id="f-pin" type="password" inputmode="numeric"
+             maxlength="8" placeholder="••••" autocomplete="off"
+             onkeydown="if(event.key==='Enter')document.getElementById('f-pin2').focus()">
+    </div>
+    <div class="field">
+      <label>Confirm PIN</label>
+      <input class="pin-input" id="f-pin2" type="password" inputmode="numeric"
+             maxlength="8" placeholder="••••" autocomplete="off"
+             onkeydown="if(event.key==='Enter')ovSubmit()">
+    </div>`;
+  document.getElementById('ov-btn').textContent = 'Create PIN';
+  setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 80);
 }
 
-function showPinGate() {
+function renderPinGate(sub, btnLabel, fn) {
   ovMode = 'pin';
   document.getElementById('ov-title').textContent = 'Lift tracker';
-  document.getElementById('ov-sub').textContent   = 'Enter your PIN to continue.';
+  document.getElementById('ov-sub').textContent   = sub;
   document.getElementById('ov-fields').innerHTML  = `
-    <div class="field pin-field">
-      <input id="f-pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••"
-             autocomplete="off" onkeydown="if(event.key==='Enter')ovAction()">
+    <div class="field">
+      <input class="pin-input" id="f-pin" type="password" inputmode="numeric"
+             maxlength="8" placeholder="••••" autocomplete="off"
+             onkeydown="if(event.key==='Enter')ovSubmit()">
     </div>`;
-  document.getElementById('ov-hint').innerHTML = '';
-  document.getElementById('ov-btn').textContent = 'Unlock';
-  document.getElementById('ov-btn').disabled    = false;
-  ovBtnAction = doPin;
-  setTimeout(() => { const i = document.getElementById('f-pin'); if (i) i.focus(); }, 80);
+  document.getElementById('ov-btn').textContent = btnLabel;
+  document.getElementById('ov-btn').onclick      = fn;
+  setTimeout(() => { const i = document.getElementById('f-pin'); if(i) i.focus(); }, 80);
 }
 
-async function doPin() {
-  const entered = v('f-pin');
-  if (!entered) return;
-  const h = await hashPin(entered);
-  if (h === cfg.pinHash) {
-    await startApp();
+function ovSubmit() {
+  if (ovMode === 'create') createPin();
+  else submitPin();
+}
+
+async function createPin() {
+  const a = (document.getElementById('f-pin')  || {}).value || '';
+  const b = (document.getElementById('f-pin2') || {}).value || '';
+  if (a.length < 4) { ovErr('PIN must be at least 4 digits'); return; }
+  if (a !== b)       { ovErr('PINs do not match'); return; }
+  appToken = await pinToToken(a);
+  localStorage.setItem('lt_pin_hash', await hashForStorage(appToken));
+  unlock();
+}
+
+async function submitPin() {
+  const pin = (document.getElementById('f-pin') || {}).value || '';
+  if (!pin) return;
+  const token = await pinToToken(pin);
+  const hash  = await hashForStorage(token);
+  if (hash === localStorage.getItem('lt_pin_hash')) {
+    appToken = token;
+    unlock();
   } else {
     ovErr('Incorrect PIN');
     document.getElementById('f-pin').value = '';
   }
 }
 
-// ════════════════════════════════════════════════════════════
-//  GITHUB API
-// ════════════════════════════════════════════════════════════
-function ghHeaders() {
-  return {
-    'Authorization': `Bearer ${cfg.token}`,
-    'Accept':        'application/vnd.github+json',
-    'Content-Type':  'application/json',
-    'X-GitHub-Api-Version': '2022-11-28',
-  };
+function ovErr(msg) {
+  document.getElementById('ov-err').textContent = msg;
+  setTimeout(() => document.getElementById('ov-err').textContent = '', 3500);
 }
 
-async function testGitHubToken(repo, tok) {
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10000);
-    const r = await fetch(`${GITHUB_API}/repos/${repo}`, {
-      signal: controller.signal,
-      headers: {
-        'Authorization': `Bearer ${tok.trim()}`,
-        'Accept': 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-      }
-    });
-    clearTimeout(timer);
-    if (!r.ok) {
-      const status = r.status;
-      if (status === 401 || status === 403) return { ok: false, msg: 'Token rejected — check permissions (needs Contents: Read and write)' };
-      if (status === 404) return { ok: false, msg: 'Repo not found — check username and repo name' };
-      return { ok: false, msg: `GitHub returned ${status}` };
-    }
-    return { ok: true };
-  } catch(e) {
-    if (e.name === 'AbortError') return { ok: false, msg: 'Request timed out — check your connection' };
-    return { ok: false, msg: 'Network error — check your connection' };
-  }
-}
-
-async function loadRemote(showFeedback = false) {
-  setSyncState('loading', 'Syncing…');
-  try {
-    const r = await fetch(`${GITHUB_API}/repos/${cfg.repo}/contents/${DATA_FILE}`, { headers: ghHeaders() });
-    if (r.status === 404) {
-      sessions = [];
-      fileSHA  = '';
-      setSyncState('ok', 'Connected — no data yet');
-      return;
-    }
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const json = await r.json();
-    fileSHA  = json.sha;
-    sessions = JSON.parse(atob(json.content.replace(/\n/g, '')));
-    setSyncState('ok', 'Synced');
-    if (showFeedback) showToast('Synced from GitHub', true);
-  } catch(e) {
-    setSyncState('err', 'Sync failed');
-    if (showFeedback) showToast('Could not sync — check connection', false);
-  }
-  renderHistory();
-  updateStats();
-  updateProgress();
-}
-
-async function saveRemote() {
-  const payload = JSON.stringify(sessions, null, 2);
-  const encoded = btoa(unescape(encodeURIComponent(payload)));
-  const body = {
-    message: `Update sessions — ${new Date().toISOString().split('T')[0]}`,
-    content: encoded,
-    ...(fileSHA ? { sha: fileSHA } : {}),
-  };
-  const r = await fetch(`${GITHUB_API}/repos/${cfg.repo}/contents/${DATA_FILE}`, {
-    method:  'PUT',
-    headers: ghHeaders(),
-    body:    JSON.stringify(body),
-  });
-  if (!r.ok) throw new Error('GitHub write failed: ' + r.status);
-  const json = await r.json();
-  fileSHA = json.content.sha;
-}
-
-// ════════════════════════════════════════════════════════════
-//  APP INIT
-// ════════════════════════════════════════════════════════════
-async function startApp() {
+async function unlock() {
   document.getElementById('overlay').style.display = 'none';
   document.getElementById('app').style.display     = 'block';
-  document.getElementById('cfg-repo-lbl').textContent  = cfg.repo;
-  document.getElementById('cfg-file-lbl').textContent  = `${cfg.repo}/${DATA_FILE}`;
   applyUnit();
   document.getElementById('s-date').value = todayStr();
   addExercise();
-  await loadRemote();
+  await loadSessions();
 }
 
-async function boot() {
-  loadCfg();
-  const hasCreds  = !!(cfg.repo && cfg.token);
-  const hasPinHash = !!cfg.pinHash;
+// ── Change PIN ────────────────────────────────────────────────
+async function saveNewPin() {
+  const a = document.getElementById('new-pin-a').value;
+  const b = document.getElementById('new-pin-b').value;
+  const e = document.getElementById('pin-chg-err');
+  if (a.length < 4) { e.textContent = 'PIN must be at least 4 digits'; return; }
+  if (a !== b)       { e.textContent = 'PINs do not match'; return; }
+  const newToken = await pinToToken(a);
+  setBtn('save-btn', true, 'Updating…');
+  try {
+    // Refetch all rows, delete then re-insert with new token
+    const rows = await sb('GET', '/rest/v1/lift_sessions?select=*&order=session_date.desc');
+    for (const row of (rows||[])) {
+      await sb('DELETE', `/rest/v1/lift_sessions?id=eq.${encodeURIComponent(row.id)}`);
+      await sb('POST',   '/rest/v1/lift_sessions', {...row, app_token: newToken}, newToken);
+    }
+    appToken = newToken;
+    localStorage.setItem('lt_pin_hash', await hashForStorage(newToken));
+    document.getElementById('new-pin-a').value = '';
+    document.getElementById('new-pin-b').value = '';
+    e.textContent = '';
+    togglePanel('pin-panel');
+    showToast('PIN updated', true);
+  } catch(_) { e.textContent = 'Failed — try again'; }
+  setBtn('save-btn', false, 'Save session');
+}
 
-  if (!hasPinHash) {
-    // Truly first time — no PIN ever created
-    showFirstSetup();
-  } else if (!hasCreds) {
-    // PIN exists (another device set it up) but token was cleared/never set here
-    showDeviceSetup();
-  } else {
-    // Everything cached — just ask PIN
-    showPinGate();
+// ── Supabase ──────────────────────────────────────────────────
+async function sb(method, path, body, overrideToken) {
+  const token = overrideToken || appToken;
+  const opts = {
+    method,
+    headers: {
+      'apikey':        SB_ANON,
+      'Authorization': `Bearer ${SB_ANON}`,
+      'Content-Type':  'application/json',
+      'x-app-token':   token,
+      ...(method==='POST' ? {'Prefer':'return=representation'} : {}),
+    },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(SB_URL + path, opts);
+  if (!r.ok) throw new Error(await r.text().catch(()=>r.status));
+  const ct = r.headers.get('content-type')||'';
+  if (ct.includes('json') && r.status !== 204) return r.json();
+  return null;
+}
+
+async function loadSessions(feedback = false) {
+  setSyncState('loading','Syncing…');
+  try {
+    const rows = await sb('GET','/rest/v1/lift_sessions?select=id,session_date,name,exercises,total_lbs,unit_logged&order=session_date.desc,created_at.desc');
+    sessions = (rows||[]).map(r=>({
+      id:r.id, date:r.session_date, name:r.name,
+      exercises: typeof r.exercises==='string'?JSON.parse(r.exercises):r.exercises,
+      total_lbs:Number(r.total_lbs), unit_logged:r.unit_logged,
+    }));
+    setSyncState('ok','Synced');
+    if (feedback) showToast('Synced',true);
+  } catch(e) {
+    setSyncState('err','Sync failed');
+    if (feedback) showToast('Could not sync',false);
   }
+  renderHistory(); updateStats(); updateProgress();
 }
 
-// ════════════════════════════════════════════════════════════
-//  UNIT HANDLING
-// ════════════════════════════════════════════════════════════
-function setUnit(u) {
-  unit = u;
-  localStorage.setItem('lt_unit', u);
-  applyUnit();
-  renderHistory();
-  updateStats();
-  updateProgress();
-  updateLive();
-  document.querySelectorAll('.wt-lbl').forEach(el => el.textContent = 'Weight (' + u + ')');
-  document.querySelectorAll('.wt-in').forEach(inp => inp.placeholder = u);
-}
-
-function applyUnit() {
-  document.getElementById('u-lbs').classList.toggle('active', unit === 'lbs');
-  document.getElementById('u-kg').classList.toggle('active', unit === 'kg');
-  document.getElementById('unit-goal-lbl').textContent =
-    unit === 'lbs'
-      ? 'Goal: 1,000,000 lbs'
-      : 'Goal: ' + Math.round(GOAL_LBS / 2.20462).toLocaleString() + ' kg';
-}
-
-function fmtW(lbs) {
-  if (unit === 'lbs') return Math.round(lbs).toLocaleString() + ' lbs';
-  return Math.round(lbs / 2.20462).toLocaleString() + ' kg';
-}
-
-// ════════════════════════════════════════════════════════════
-//  PROGRESS
-// ════════════════════════════════════════════════════════════
-function updateProgress() {
-  const totalLbs = sessions.reduce((a, s) => a + (s.total_lbs || 0), 0);
-  const pct = Math.min(100, (totalLbs / GOAL_LBS) * 100);
-  document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('prog-lbl').textContent  =
-    fmtW(totalLbs) + ' / ' + (unit === 'lbs' ? '1,000,000 lbs' : Math.round(GOAL_LBS / 2.20462).toLocaleString() + ' kg');
-  document.getElementById('prog-pct').textContent  = pct.toFixed(2) + '%';
-
-  const c = document.getElementById('milestones');
-  c.innerHTML = MILESTONES.map((ms, i) => {
-    const reached = totalLbs >= ms.lbs;
-    const next    = !reached && (i === 0 || totalLbs >= MILESTONES[i - 1].lbs);
-    const sub     = reached ? '✓ done' : next ? Math.round(totalLbs / ms.lbs * 100) + '%' : '';
-    return `<div class="ms${reached ? ' reached' : next ? ' next' : ''}">
-      <div class="ms-val">${ms.label}</div>
-      <div class="ms-sub">${sub}</div>
-    </div>`;
-  }).join('');
-}
-
-// ════════════════════════════════════════════════════════════
-//  EXERCISE BUILDER
-// ════════════════════════════════════════════════════════════
-function addExercise(exName = '', sets = []) {
-  const id  = ++exCounter;
-  const div = document.createElement('div');
-  div.className = 'ex-item';
-  div.id = 'ex-' + id;
-  const opts = EXERCISES.map(e =>
-    `<option value="${e.name}"${e.name === exName ? ' selected' : ''}>${e.name}</option>`).join('');
-  const ex      = EXERCISES.find(e => e.name === exName);
-  const linkHtml = ex && ex.url
-    ? `<a class="ex-link" href="${ex.url}" target="_blank" rel="noopener" id="ex-link-${id}">Watch ↗</a>`
-    : `<a class="ex-link" href="" target="_blank" rel="noopener" id="ex-link-${id}" style="visibility:hidden">Watch ↗</a>`;
-  div.innerHTML = `
-    <div class="ex-name-row">
-      <select class="fi" id="ex-sel-${id}" onchange="onExChange(${id},this)">
-        <option value="">Select exercise</option>${opts}
-      </select>
-      ${linkHtml}
-      <button class="rm-ex-btn" onclick="rmEx(${id})">Remove</button>
-    </div>
-    <div class="set-hdr">
-      <span>#</span><span>Reps</span><span class="wt-lbl">Weight (${unit})</span><span>Volume</span><span></span>
-    </div>
-    <div id="sets-${id}"></div>
-    <div class="set-actions">
-      <button class="add-set-btn" onclick="addSet(${id})">+ add set</button>
-    </div>`;
-  document.getElementById('ex-container').appendChild(div);
-  if (sets.length) sets.forEach(s => addSet(id, s.reps, s.wt, BW_NAMES.includes(exName)));
-  else addSet(id);
-  updateLive();
-}
-
-function rmEx(id) {
-  const el = document.getElementById('ex-' + id);
-  if (el) { el.remove(); updateLive(); }
-}
-
-function addSet(exId, reps = '', wt = '', forceBW = false) {
-  const c    = document.getElementById('sets-' + exId);
-  const sel  = document.getElementById('ex-sel-' + exId);
-  const isBW = forceBW || (sel && BW_NAMES.includes(sel.value));
-  const idx  = c.children.length + 1;
-  const row  = document.createElement('div');
-  row.className = 'set-row';
-  row.innerHTML = `
-    <span class="set-num">${idx}</span>
-    <input class="fi" type="number" min="1" max="200" step="1" placeholder="Reps" value="${reps}" oninput="updateLive()">
-    <input class="fi wt-in" type="number" min="0" max="2000" step="${unit === 'lbs' ? 5 : 2.5}"
-           placeholder="${unit}" value="${wt}"
-           ${isBW ? 'disabled style="opacity:.4"' : ''} oninput="updateLive()">
-    <span class="vol-cell">—</span>
-    <button class="del-set-btn" onclick="delSet(this,${exId})" title="Remove set">×</button>`;
-  c.appendChild(row);
-  reindex(exId);
-  updateLive();
-}
-
-function delSet(btn, exId) {
-  const c = document.getElementById('sets-' + exId);
-  if (c.children.length <= 1) return;
-  btn.closest('.set-row').remove();
-  reindex(exId);
-  updateLive();
-}
-
-function reindex(exId) {
-  document.querySelectorAll(`#sets-${exId} .set-row .set-num`).forEach((el, i) => {
-    el.textContent = i + 1;
-  });
-}
-
-function onExChange(id, sel) {
-  const item = document.getElementById('ex-' + id);
-  const isBW = BW_NAMES.includes(sel.value);
-  item.querySelectorAll('.wt-in').forEach(inp => {
-    inp.disabled = isBW;
-    inp.style.opacity = isBW ? '.4' : '1';
-    if (isBW) inp.value = '';
-  });
-  const ex    = EXERCISES.find(e => e.name === sel.value);
-  const link  = document.getElementById('ex-link-' + id);
-  if (link) {
-    if (ex && ex.url) { link.href = ex.url; link.style.visibility = 'visible'; }
-    else              { link.href = '';    link.style.visibility = 'hidden'; }
-  }
-  updateLive();
-}
-
-// ════════════════════════════════════════════════════════════
-//  LIVE TOTAL
-// ════════════════════════════════════════════════════════════
-function calcSessionLbs() {
-  let total = 0;
-  document.querySelectorAll('.ex-item').forEach(item => {
-    const id   = item.id.replace('ex-', '');
-    const sel  = document.getElementById('ex-sel-' + id);
-    const isBW = sel && BW_NAMES.includes(sel.value);
-    item.querySelectorAll('.set-row').forEach(row => {
-      const ins  = row.querySelectorAll('input');
-      const reps = parseInt(ins[0].value) || 0;
-      const wtRaw= parseFloat(ins[1].value) || 0;
-      const wt   = isBW ? (unit === 'lbs' ? BW_LBS : BW_KG) : wtRaw;
-      const wtLbs= unit === 'lbs' ? wt : wt * 2.20462;
-      total += reps * wtLbs;
-      const vol  = reps * wt;
-      row.querySelector('.vol-cell').textContent =
-        vol > 0 ? Math.round(vol).toLocaleString() + ' ' + unit : '—';
-    });
-  });
-  return total;
-}
-
-function updateLive() {
-  document.getElementById('live-total').textContent = fmtW(calcSessionLbs());
-}
-
-// ════════════════════════════════════════════════════════════
-//  SAVE / DELETE
-// ════════════════════════════════════════════════════════════
+// ── Save / Delete ─────────────────────────────────────────────
 async function saveSession() {
   const date = document.getElementById('s-date').value;
   const name = document.getElementById('s-name').value.trim() || 'Workout';
-  if (!date) { showToast('Please select a date.', false); return; }
-
-  const exercises = [];
-  let totalLbs = 0;
-  let valid = true;
-
-  document.querySelectorAll('.ex-item').forEach(item => {
-    const id   = item.id.replace('ex-', '');
-    const sel  = document.getElementById('ex-sel-' + id);
-    if (!sel || !sel.value) { valid = false; return; }
+  if (!date) { showToast('Please select a date.',false); return; }
+  const exercises = []; let totalLbs=0, valid=true;
+  document.querySelectorAll('.ex-item').forEach(item=>{
+    const id  = item.id.replace('ex-','');
+    const sel = document.getElementById('ex-sel-'+id);
+    if (!sel||!sel.value){valid=false;return;}
     const isBW = BW_NAMES.includes(sel.value);
     const sets = [];
-    item.querySelectorAll('.set-row').forEach(row => {
-      const ins   = row.querySelectorAll('input');
-      const reps  = parseInt(ins[0].value) || 0;
-      const wtRaw = parseFloat(ins[1].value) || 0;
-      if (!reps) { valid = false; return; }
-      const wt    = isBW ? (unit === 'lbs' ? BW_LBS : BW_KG) : wtRaw;
-      const wtLbs = unit === 'lbs' ? wt : wt * 2.20462;
-      totalLbs += reps * wtLbs;
-      sets.push({ reps, wt: Math.round(wt * 10) / 10 });
+    item.querySelectorAll('.set-row').forEach(row=>{
+      const ins=row.querySelectorAll('input');
+      const reps=parseInt(ins[0].value)||0;
+      const wtRaw=parseFloat(ins[1].value)||0;
+      if (!reps){valid=false;return;}
+      const wt=isBW?(unit==='lbs'?BW_LBS:BW_KG):wtRaw;
+      totalLbs+=reps*(unit==='lbs'?wt:wt*2.20462);
+      sets.push({reps,wt:Math.round(wt*10)/10});
     });
-    exercises.push({ name: sel.value, sets });
+    exercises.push({name:sel.value,sets});
   });
-
-  if (!valid || !exercises.length) {
-    showToast('Fill in exercise and reps for every row.', false); return;
-  }
-
-  const btn = document.getElementById('save-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span>Saving…';
-  setSyncState('loading', 'Saving…');
-
-  const session = {
-    id:        Date.now().toString(),
-    date,
-    name,
-    exercises,
-    total_lbs: Math.round(totalLbs),
-    unit_logged: unit,
-  };
-  sessions.unshift(session);
-
+  if (!valid||!exercises.length){showToast('Fill in exercise and reps for every row.',false);return;}
+  const session={id:Date.now().toString(),date,name,exercises,total_lbs:Math.round(totalLbs),unit_logged:unit};
+  setBtn('save-btn',true,'Saving…'); setSyncState('loading','Saving…');
   try {
-    await saveRemote();
-    setSyncState('ok', 'Saved');
-    showToast('Saved — ' + fmtW(totalLbs) + ' added to your total', true);
-    clearForm();
-    renderHistory();
-    updateStats();
-    updateProgress();
-  } catch(e) {
-    sessions.shift();
-    setSyncState('err', 'Save failed');
-    showToast('Could not save to GitHub — check connection', false);
+    await sb('POST','/rest/v1/lift_sessions',{...session,app_token:appToken});
+    sessions.unshift(session);
+    setSyncState('ok','Saved');
+    showToast('Saved — '+fmtW(totalLbs)+' added to your total',true);
+    clearForm(); renderHistory(); updateStats(); updateProgress();
+  } catch(e){
+    setSyncState('err','Save failed');
+    showToast('Could not save — check connection',false);
   }
-
-  btn.disabled = false;
-  btn.textContent = 'Save session';
+  setBtn('save-btn',false,'Save session');
 }
 
 async function deleteSession(id) {
   if (!confirm('Delete this session?')) return;
-  const idx = sessions.findIndex(s => s.id === id);
-  if (idx === -1) return;
-  const removed = sessions.splice(idx, 1)[0];
-  setSyncState('loading', 'Deleting…');
+  const idx=sessions.findIndex(s=>s.id===id);
+  if (idx===-1) return;
+  const removed=sessions.splice(idx,1)[0];
+  renderHistory(); updateStats(); updateProgress();
   try {
-    await saveRemote();
-    setSyncState('ok', 'Saved');
-    renderHistory();
-    updateStats();
-    updateProgress();
+    await sb('DELETE',`/rest/v1/lift_sessions?id=eq.${encodeURIComponent(id)}`);
   } catch(_) {
-    sessions.splice(idx, 0, removed);
-    setSyncState('err', 'Delete failed');
-    showToast('Could not delete — check connection', false);
+    sessions.splice(idx,0,removed);
+    renderHistory(); updateStats(); updateProgress();
+    showToast('Could not delete — check connection',false);
   }
 }
 
-function clearForm() {
-  document.getElementById('ex-container').innerHTML = '';
-  document.getElementById('s-name').value = '';
-  addExercise();
-  updateLive();
+function clearForm(){
+  document.getElementById('ex-container').innerHTML='';
+  document.getElementById('s-name').value='';
+  addExercise(); updateLive();
 }
 
-// ════════════════════════════════════════════════════════════
-//  RENDER
-// ════════════════════════════════════════════════════════════
-function renderHistory() {
-  const c = document.getElementById('history');
-  if (!sessions.length) { c.innerHTML = '<div class="empty">No sessions yet</div>'; return; }
-  c.innerHTML = sessions.map(s => {
-    const names = s.exercises.slice(0, 3)
-      .map(e => e.name.replace(' (bodyweight)', '').replace(' (KB)', ''))
-      .join(', ') + (s.exercises.length > 3 ? ` +${s.exercises.length - 3}` : '');
-    const d    = new Date(s.date + 'T12:00:00');
-    const dStr = d.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
-    return `<div class="sess-item">
-      <span class="si-date">${dStr}</span>
-      <span class="si-name">${s.name} · ${names}</span>
-      <span class="si-vol">${fmtW(s.total_lbs)}</span>
-      <button class="si-del" onclick="deleteSession('${s.id}')">×</button>
-    </div>`;
+// ── Units ─────────────────────────────────────────────────────
+function setUnit(u){
+  unit=u; localStorage.setItem('lt_unit',u); applyUnit();
+  renderHistory(); updateStats(); updateProgress(); updateLive();
+  document.querySelectorAll('.wt-lbl').forEach(el=>el.textContent='Weight ('+u+')');
+  document.querySelectorAll('.wt-in').forEach(inp=>inp.placeholder=u);
+}
+function applyUnit(){
+  document.getElementById('u-lbs').classList.toggle('active',unit==='lbs');
+  document.getElementById('u-kg').classList.toggle('active',unit==='kg');
+  document.getElementById('unit-goal-lbl').textContent=unit==='lbs'
+    ?'Goal: 1,000,000 lbs'
+    :'Goal: '+Math.round(GOAL_LBS/2.20462).toLocaleString()+' kg';
+}
+function fmtW(lbs){
+  return unit==='lbs'
+    ?Math.round(lbs).toLocaleString()+' lbs'
+    :Math.round(lbs/2.20462).toLocaleString()+' kg';
+}
+
+// ── Progress ──────────────────────────────────────────────────
+function updateProgress(){
+  const total=sessions.reduce((a,s)=>a+(s.total_lbs||0),0);
+  const pct=Math.min(100,total/GOAL_LBS*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-lbl').textContent=fmtW(total)+' / '+(unit==='lbs'?'1,000,000 lbs':Math.round(GOAL_LBS/2.20462).toLocaleString()+' kg');
+  document.getElementById('prog-pct').textContent=pct.toFixed(2)+'%';
+  document.getElementById('milestones').innerHTML=MILESTONES.map((ms,i)=>{
+    const reached=total>=ms.lbs;
+    const next=!reached&&(i===0||total>=MILESTONES[i-1].lbs);
+    const sub=reached?'✓ done':next?Math.round(total/ms.lbs*100)+'%':'';
+    return `<div class="ms${reached?' reached':next?' next':''}"><div class="ms-val">${ms.label}</div><div class="ms-sub">${sub}</div></div>`;
   }).join('');
 }
 
-function updateStats() {
-  const today   = todayStr();
-  const todayLbs= sessions.filter(s => s.date === today).reduce((a, s) => a + (s.total_lbs || 0), 0);
-  const allLbs  = sessions.reduce((a, s) => a + (s.total_lbs || 0), 0);
-  const last    = sessions.length
-    ? new Date(sessions[0].date + 'T12:00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })
-    : '—';
-  document.getElementById('st-today').textContent = fmtW(todayLbs);
-  document.getElementById('st-all').textContent   = fmtW(allLbs);
-  document.getElementById('st-count').textContent = sessions.length;
-  document.getElementById('st-last').textContent  = last;
+// ── Exercise builder ──────────────────────────────────────────
+function addExercise(exName='',sets=[]){
+  const id=++exCounter;
+  const div=document.createElement('div');
+  div.className='ex-item'; div.id='ex-'+id;
+  const opts=EXERCISES.map(e=>`<option value="${e.name}"${e.name===exName?' selected':''}>${e.name}</option>`).join('');
+  const ex=EXERCISES.find(e=>e.name===exName);
+  const link=ex&&ex.url?`<a class="ex-link" href="${ex.url}" target="_blank" rel="noopener" id="ex-link-${id}">Watch ↗</a>`
+    :`<a class="ex-link" id="ex-link-${id}" style="visibility:hidden">Watch ↗</a>`;
+  div.innerHTML=`
+    <div class="ex-name-row">
+      <select class="fi" id="ex-sel-${id}" onchange="onExChange(${id},this)">
+        <option value="">Select exercise</option>${opts}
+      </select>
+      ${link}
+      <button class="rm-ex-btn" onclick="rmEx(${id})">Remove</button>
+    </div>
+    <div class="set-hdr"><span>#</span><span>Reps</span><span class="wt-lbl">Weight (${unit})</span><span>Volume</span><span></span></div>
+    <div id="sets-${id}"></div>
+    <div class="set-actions"><button class="add-set-btn" onclick="addSet(${id})">+ add set</button></div>`;
+  document.getElementById('ex-container').appendChild(div);
+  sets.length?sets.forEach(s=>addSet(id,s.reps,s.wt,BW_NAMES.includes(exName))):addSet(id);
+  updateLive();
 }
 
-// ════════════════════════════════════════════════════════════
-//  UI HELPERS
-// ════════════════════════════════════════════════════════════
-function setSyncState(state, label) {
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-lbl');
-  dot.className = 'sync-dot' + (state === 'ok' ? ' ok' : state === 'err' ? ' err' : '');
-  lbl.textContent = label;
-}
-function showToast(msg, ok) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className   = 'toast ' + (ok ? 'ok' : 'err');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => { t.className = 'toast'; }, 4000);
-}
-function toggleSettings() {
-  document.getElementById('settings-panel').classList.toggle('open');
-}
-function v(id) {
-  const el = document.getElementById(id);
-  return el ? el.value.trim() : '';
-}
-function todayStr() {
-  return new Date().toISOString().split('T')[0];
+function rmEx(id){const el=document.getElementById('ex-'+id);if(el){el.remove();updateLive();}}
+
+function addSet(exId,reps='',wt='',forceBW=false){
+  const c=document.getElementById('sets-'+exId);
+  const sel=document.getElementById('ex-sel-'+exId);
+  const isBW=forceBW||(sel&&BW_NAMES.includes(sel.value));
+  const row=document.createElement('div');
+  row.className='set-row';
+  row.innerHTML=`
+    <span class="set-num">${c.children.length+1}</span>
+    <input class="fi" type="number" min="1" max="200" step="1" placeholder="Reps" value="${reps}" oninput="updateLive()">
+    <input class="fi wt-in" type="number" min="0" max="2000" step="${unit==='lbs'?5:2.5}"
+           placeholder="${unit}" value="${wt}" ${isBW?'disabled style="opacity:.4"':''} oninput="updateLive()">
+    <span class="vol-cell">—</span>
+    <button class="del-set-btn" onclick="delSet(this,${exId})">×</button>`;
+  c.appendChild(row); reindex(exId); updateLive();
 }
 
-// ════════════════════════════════════════════════════════════
-//  BOOT
-// ════════════════════════════════════════════════════════════
+function delSet(btn,exId){
+  const c=document.getElementById('sets-'+exId);
+  if(c.children.length<=1)return;
+  btn.closest('.set-row').remove(); reindex(exId); updateLive();
+}
+
+function reindex(exId){
+  document.querySelectorAll(`#sets-${exId} .set-row .set-num`).forEach((el,i)=>el.textContent=i+1);
+}
+
+function onExChange(id,sel){
+  const item=document.getElementById('ex-'+id);
+  const isBW=BW_NAMES.includes(sel.value);
+  item.querySelectorAll('.wt-in').forEach(inp=>{inp.disabled=isBW;inp.style.opacity=isBW?'.4':'1';if(isBW)inp.value='';});
+  const ex=EXERCISES.find(e=>e.name===sel.value);
+  const link=document.getElementById('ex-link-'+id);
+  if(link){if(ex&&ex.url){link.href=ex.url;link.style.visibility='visible';}else{link.href='';link.style.visibility='hidden';}}
+  updateLive();
+}
+
+function updateLive(){
+  let total=0;
+  document.querySelectorAll('.ex-item').forEach(item=>{
+    const id=item.id.replace('ex-','');
+    const sel=document.getElementById('ex-sel-'+id);
+    const isBW=sel&&BW_NAMES.includes(sel.value);
+    item.querySelectorAll('.set-row').forEach(row=>{
+      const ins=row.querySelectorAll('input');
+      const reps=parseInt(ins[0].value)||0;
+      const wtRaw=parseFloat(ins[1].value)||0;
+      const wt=isBW?(unit==='lbs'?BW_LBS:BW_KG):wtRaw;
+      total+=reps*(unit==='lbs'?wt:wt*2.20462);
+      row.querySelector('.vol-cell').textContent=reps*wt>0?Math.round(reps*wt).toLocaleString()+' '+unit:'—';
+    });
+  });
+  document.getElementById('live-total').textContent=fmtW(total);
+}
+
+// ── Render ────────────────────────────────────────────────────
+function renderHistory(){
+  const c=document.getElementById('history');
+  if(!sessions.length){c.innerHTML='<div class="empty">No sessions yet</div>';return;}
+  c.innerHTML=sessions.map(s=>{
+    const names=s.exercises.slice(0,3).map(e=>e.name.replace(' (bodyweight)','').replace(' (KB)','')).join(', ')+(s.exercises.length>3?` +${s.exercises.length-3}`:'');
+    const dStr=new Date(s.date+'T12:00:00').toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+    return `<div class="sess-item"><span class="si-date">${dStr}</span><span class="si-name">${s.name} · ${names}</span><span class="si-vol">${fmtW(s.total_lbs)}</span><button class="si-del" onclick="deleteSession('${s.id}')">×</button></div>`;
+  }).join('');
+}
+
+function updateStats(){
+  const today=todayStr();
+  const todayLbs=sessions.filter(s=>s.date===today).reduce((a,s)=>a+(s.total_lbs||0),0);
+  const allLbs=sessions.reduce((a,s)=>a+(s.total_lbs||0),0);
+  const last=sessions.length?new Date(sessions[0].date+'T12:00:00').toLocaleDateString('en-CA',{month:'short',day:'numeric'}):'—';
+  document.getElementById('st-today').textContent=fmtW(todayLbs);
+  document.getElementById('st-all').textContent=fmtW(allLbs);
+  document.getElementById('st-count').textContent=sessions.length;
+  document.getElementById('st-last').textContent=last;
+}
+
+// ── UI helpers ────────────────────────────────────────────────
+function setSyncState(state,label){
+  document.getElementById('sync-dot').className='sync-dot'+(state==='ok'?' ok':state==='err'?' err':'');
+  document.getElementById('sync-lbl').textContent=label;
+}
+function showToast(msg,ok){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+(ok?'ok':'err');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',4000);
+}
+function togglePanel(id){document.getElementById(id).classList.toggle('open');}
+function setBtn(id,loading,label){
+  const b=document.getElementById(id);
+  b.disabled=loading;
+  b.innerHTML=loading?`<span class="spin"></span>${label}`:label;
+}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+
+// ── Boot ──────────────────────────────────────────────────────
 boot();
 </script>
 </body>
