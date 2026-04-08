@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lift tracker</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Lift tracker">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1c1a" media="(prefers-color-scheme: dark)">
 <style>
 :root {
   --bg:#ffffff; --bg2:#f7f7f5; --bg3:#eeecea;
@@ -196,14 +201,17 @@ input.fi::placeholder{color:var(--text3)}
     <button class="settings-btn" onclick="toggleSettings()">Settings</button>
   </div>
 
-  <div class="settings-panel" id="settings-panel">
+    <div class="settings-panel" id="settings-panel">
     <h3>Configuration</h3>
     <div class="cfg-row"><span>Repo</span><code id="cfg-repo-lbl">—</code></div>
-    <div class="cfg-row"><span>Token</span><code>••••••••••••</code><button class="icon-btn danger" onclick="resetAll()">Reset setup</button></div>
-    <div class="cfg-row"><span>PIN</span><code>••••</code><button class="icon-btn danger" onclick="resetAll()">Reset PIN</button></div>
-    <div class="cfg-row" style="border-bottom:none;margin-top:6px">
-      <span style="font-size:12px;color:var(--text3)">Data is saved to <code id="cfg-file-lbl">sessions.json</code> in your private repo.</span>
+    <div class="cfg-row"><span>Token</span><code>••••••••••••</code><button class="icon-btn danger" onclick="resetCreds()">Clear token</button></div>
+    <div class="cfg-row"><span>PIN</span><code>stored as hash</code><button class="icon-btn danger" onclick="resetAll()">Reset everything</button></div>
+    <div class="cfg-row" style="border-bottom:none;margin-top:4px;flex-wrap:wrap;gap:6px">
+      <span style="font-size:12px;color:var(--text3)">Data file: <code id="cfg-file-lbl">—</code></span>
       <button class="icon-btn" onclick="loadRemote(true)">Force sync</button>
+    </div>
+    <div style="margin-top:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--r);font-size:12px;color:var(--text3);line-height:1.6">
+      <b style="color:var(--text2)">Add to home screen (iOS):</b> tap the Share button in Safari → "Add to Home Screen". This gives the app persistent storage so you only need to enter your token once per device.
     </div>
   </div>
 
@@ -312,32 +320,52 @@ let ovBtnAction = null;
 // ════════════════════════════════════════════════════════════
 //  LOCAL STORAGE
 // ════════════════════════════════════════════════════════════
+// cfg is stored in two separate keys so the PIN (which never changes)
+// survives an iOS localStorage purge independently from the token.
+// lt_pin  — hashed PIN (SHA-256 hex) — rarely cleared
+// lt_cred — { repo, tok (base64) }   — re-entered on new device if cleared
+// lt_unit — 'lbs' | 'kg'
+
+async function hashPin(p) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
 function saveCfg() {
-  localStorage.setItem('lt_cfg', JSON.stringify({
-    repo: cfg.repo,
-    pin:  cfg.pin,
-    tok:  btoa(cfg.token),
-  }));
+  localStorage.setItem('lt_cred', JSON.stringify({ repo: cfg.repo, tok: btoa(cfg.token) }));
+  // PIN hash is saved separately and only once
+}
+async function savePinHash(pin) {
+  localStorage.setItem('lt_pin', await hashPin(pin));
 }
 function loadCfg() {
   try {
-    const c = JSON.parse(localStorage.getItem('lt_cfg') || '{}');
-    cfg.repo  = c.repo  || '';
-    cfg.pin   = c.pin   || '';
-    cfg.token = c.tok   ? atob(c.tok) : '';
+    const c = JSON.parse(localStorage.getItem('lt_cred') || '{}');
+    cfg.repo  = c.repo || '';
+    cfg.token = c.tok  ? atob(c.tok) : '';
   } catch(_) {}
+  cfg.pinHash = localStorage.getItem('lt_pin') || '';
   unit = localStorage.getItem('lt_unit') || 'lbs';
 }
 function resetAll() {
   if (!confirm('Reset all configuration? You will need to re-enter your GitHub token and PIN.')) return;
-  localStorage.removeItem('lt_cfg');
-  localStorage.removeItem('lt_unit');
+  ['lt_cred','lt_pin','lt_unit'].forEach(k => localStorage.removeItem(k));
+  location.reload();
+}
+function resetCreds() {
+  if (!confirm('Clear saved token? You will re-enter it on next load (PIN is preserved).')) return;
+  localStorage.removeItem('lt_cred');
   location.reload();
 }
 
 // ════════════════════════════════════════════════════════════
 //  OVERLAY FLOW
 // ════════════════════════════════════════════════════════════
+// ── Overlay modes ────────────────────────────────────────────
+// 'first'  — no PIN ever set: ask repo + PAT + create PIN
+// 'device' — PIN set, but creds missing (new device or iOS cleared them)
+// 'pin'    — everything cached, just ask PIN
+
 function ovErr(msg) {
   document.getElementById('ov-err').textContent = msg;
   setTimeout(() => { document.getElementById('ov-err').textContent = ''; }, 4000);
@@ -351,11 +379,11 @@ function ovBtnState(disabled, label) {
 }
 function ovAction() { if (ovBtnAction) ovBtnAction(); }
 
-function showSetup() {
-  ovMode = 'setup';
+function showFirstSetup() {
+  ovMode = 'first';
   document.getElementById('ov-title').textContent = 'Setup';
-  document.getElementById('ov-sub').textContent = 'Connect a private GitHub repo to store your lift data. Only takes a minute.';
-  document.getElementById('ov-fields').innerHTML = `
+  document.getElementById('ov-sub').textContent   = 'Connect a private GitHub repo to store your lift data.';
+  document.getElementById('ov-fields').innerHTML  = `
     <div class="field"><label>GitHub username</label>
       <input id="f-user" type="text" placeholder="greybeardmag" autocomplete="off" oninput="checkSetupForm()"></div>
     <div class="field"><label>Private repo name</label>
@@ -368,56 +396,102 @@ function showSetup() {
   document.getElementById('ov-hint').innerHTML = `
     <div class="hint-box">
       <b>How to create your PAT:</b><br>
-      1. Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub → Settings → Developer settings → Fine-grained tokens</a><br>
-      2. Click <b>Generate new token</b>, give it a name, set an expiry<br>
-      3. Under <b>Repository access</b> choose your <code>lift-data</code> repo<br>
-      4. Under <b>Permissions → Repository → Contents</b> set to <b>Read and write</b><br>
-      5. Generate and paste the token above
+      1. <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub → Settings → Developer settings → Fine-grained tokens</a><br>
+      2. Generate new token → choose your <code>lift-data</code> repo<br>
+      3. Permissions → Contents → <b>Read and write</b><br>
+      4. Generate and paste above
     </div>`;
-  ovBtnAction = doSetup;
+  ovBtnAction = doFirstSetup;
   document.getElementById('ov-btn').textContent = 'Connect & continue';
-  document.getElementById('ov-btn').disabled = true;
+  document.getElementById('ov-btn').disabled    = true;
+}
+
+function showDeviceSetup() {
+  // PIN already set on another device — just need repo + PAT for this device
+  ovMode = 'device';
+  document.getElementById('ov-title').textContent = 'Connect this device';
+  document.getElementById('ov-sub').textContent   = 'Your PIN is already set. Enter your repo and token to connect this device, then you\'ll just need your PIN going forward.';
+  document.getElementById('ov-fields').innerHTML  = `
+    <div class="field"><label>GitHub username</label>
+      <input id="f-user" type="text" placeholder="greybeardmag" autocomplete="off" oninput="checkDeviceForm()"></div>
+    <div class="field"><label>Private repo name</label>
+      <input id="f-repo" type="text" placeholder="lift-data" autocomplete="off" oninput="checkDeviceForm()"></div>
+    <div class="field"><label>Personal Access Token (PAT)</label>
+      <input id="f-tok" type="password" placeholder="github_pat_…" autocomplete="off" oninput="checkDeviceForm()"
+             onkeydown="if(event.key==='Enter')ovAction()"></div>`;
+  document.getElementById('ov-hint').innerHTML = `
+    <div class="hint-box">
+      This is a one-time step per device. After this, only your PIN is needed each visit.
+    </div>`;
+  ovBtnAction = doDeviceSetup;
+  document.getElementById('ov-btn').textContent = 'Connect device';
+  document.getElementById('ov-btn').disabled    = true;
 }
 
 function checkSetupForm() {
-  const u = v('f-user'), r = v('f-repo'), t = v('f-tok'), p = v('f-pin');
-  document.getElementById('ov-btn').disabled = !(u && r && t && p.length >= 4);
+  const ok = v('f-user') && v('f-repo') && v('f-tok') && v('f-pin').length >= 4;
+  document.getElementById('ov-btn').disabled = !ok;
+}
+function checkDeviceForm() {
+  const ok = v('f-user') && v('f-repo') && v('f-tok');
+  document.getElementById('ov-btn').disabled = !ok;
 }
 
-async function doSetup() {
-  const user = v('f-user').trim();
-  const repo = v('f-repo').trim();
-  const tok  = v('f-tok').trim();
-  const pin  = v('f-pin').trim();
+async function doFirstSetup() {
+  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok'), pin = v('f-pin');
   if (!user || !repo || !tok || pin.length < 4) { ovErr('Fill in all fields (PIN ≥ 4 digits)'); return; }
   ovBtnState(true, '…Verifying');
   const fullRepo = `${user}/${repo}`;
-  const ok = await testGitHubToken(fullRepo, tok);
-  if (!ok) { ovBtnState(false, 'Connect & continue'); ovErr('Could not access repo — check username, repo name, and token permissions'); return; }
-  cfg = { repo: fullRepo, token: tok, pin };
+  if (!await testGitHubToken(fullRepo, tok)) {
+    ovBtnState(false, 'Connect & continue');
+    ovErr('Could not access repo — check username, repo name, and token permissions');
+    return;
+  }
+  cfg.repo  = fullRepo;
+  cfg.token = tok;
   saveCfg();
+  await savePinHash(pin);
+  cfg.pinHash = localStorage.getItem('lt_pin');
   await startApp();
+}
+
+async function doDeviceSetup() {
+  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok');
+  if (!user || !repo || !tok) { ovErr('Fill in all fields'); return; }
+  ovBtnState(true, '…Verifying');
+  const fullRepo = `${user}/${repo}`;
+  if (!await testGitHubToken(fullRepo, tok)) {
+    ovBtnState(false, 'Connect device');
+    ovErr('Could not access repo — check username, repo name, and token permissions');
+    return;
+  }
+  cfg.repo  = fullRepo;
+  cfg.token = tok;
+  saveCfg();
+  showPinGate();
 }
 
 function showPinGate() {
   ovMode = 'pin';
   document.getElementById('ov-title').textContent = 'Lift tracker';
-  document.getElementById('ov-sub').textContent = 'Enter your PIN to continue.';
-  document.getElementById('ov-fields').innerHTML = `
+  document.getElementById('ov-sub').textContent   = 'Enter your PIN to continue.';
+  document.getElementById('ov-fields').innerHTML  = `
     <div class="field pin-field">
       <input id="f-pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••"
              autocomplete="off" onkeydown="if(event.key==='Enter')ovAction()">
     </div>`;
   document.getElementById('ov-hint').innerHTML = '';
   document.getElementById('ov-btn').textContent = 'Unlock';
-  document.getElementById('ov-btn').disabled = false;
+  document.getElementById('ov-btn').disabled    = false;
   ovBtnAction = doPin;
   setTimeout(() => { const i = document.getElementById('f-pin'); if (i) i.focus(); }, 80);
 }
 
 async function doPin() {
   const entered = v('f-pin');
-  if (entered === cfg.pin) {
+  if (!entered) return;
+  const h = await hashPin(entered);
+  if (h === cfg.pinHash) {
     await startApp();
   } else {
     ovErr('Incorrect PIN');
@@ -509,10 +583,18 @@ async function startApp() {
 
 async function boot() {
   loadCfg();
-  if (cfg.repo && cfg.token && cfg.pin) {
-    showPinGate();
+  const hasCreds  = !!(cfg.repo && cfg.token);
+  const hasPinHash = !!cfg.pinHash;
+
+  if (!hasPinHash) {
+    // Truly first time — no PIN ever created
+    showFirstSetup();
+  } else if (!hasCreds) {
+    // PIN exists (another device set it up) but token was cleared/never set here
+    showDeviceSetup();
   } else {
-    showSetup();
+    // Everything cached — just ask PIN
+    showPinGate();
   }
 }
 
