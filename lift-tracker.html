@@ -438,13 +438,14 @@ function checkDeviceForm() {
 }
 
 async function doFirstSetup() {
-  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok'), pin = v('f-pin');
+  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok').trim(), pin = v('f-pin');
   if (!user || !repo || !tok || pin.length < 4) { ovErr('Fill in all fields (PIN ≥ 4 digits)'); return; }
   ovBtnState(true, '…Verifying');
   const fullRepo = `${user}/${repo}`;
-  if (!await testGitHubToken(fullRepo, tok)) {
+  const result = await testGitHubToken(fullRepo, tok);
+  if (!result.ok) {
     ovBtnState(false, 'Connect & continue');
-    ovErr('Could not access repo — check username, repo name, and token permissions');
+    ovErr(result.msg);
     return;
   }
   cfg.repo  = fullRepo;
@@ -456,13 +457,14 @@ async function doFirstSetup() {
 }
 
 async function doDeviceSetup() {
-  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok');
+  const user = v('f-user'), repo = v('f-repo'), tok = v('f-tok').trim();
   if (!user || !repo || !tok) { ovErr('Fill in all fields'); return; }
   ovBtnState(true, '…Verifying');
   const fullRepo = `${user}/${repo}`;
-  if (!await testGitHubToken(fullRepo, tok)) {
+  const result = await testGitHubToken(fullRepo, tok);
+  if (!result.ok) {
     ovBtnState(false, 'Connect device');
-    ovErr('Could not access repo — check username, repo name, and token permissions');
+    ovErr(result.msg);
     return;
   }
   cfg.repo  = fullRepo;
@@ -513,15 +515,28 @@ function ghHeaders() {
 
 async function testGitHubToken(repo, tok) {
   try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
     const r = await fetch(`${GITHUB_API}/repos/${repo}`, {
+      signal: controller.signal,
       headers: {
-        'Authorization': `Bearer ${tok}`,
+        'Authorization': `Bearer ${tok.trim()}`,
         'Accept': 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
       }
     });
-    return r.ok;
-  } catch(_) { return false; }
+    clearTimeout(timer);
+    if (!r.ok) {
+      const status = r.status;
+      if (status === 401 || status === 403) return { ok: false, msg: 'Token rejected — check permissions (needs Contents: Read and write)' };
+      if (status === 404) return { ok: false, msg: 'Repo not found — check username and repo name' };
+      return { ok: false, msg: `GitHub returned ${status}` };
+    }
+    return { ok: true };
+  } catch(e) {
+    if (e.name === 'AbortError') return { ok: false, msg: 'Request timed out — check your connection' };
+    return { ok: false, msg: 'Network error — check your connection' };
+  }
 }
 
 async function loadRemote(showFeedback = false) {
