@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workout Tracker</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f5f5f4;
+    --text: #1a1a1a;
+    --text-secondary: #6b7280;
+    --border: rgba(0,0,0,0.12);
+    --border-secondary: rgba(0,0,0,0.2);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --bg-secondary: #242424;
+      --text: #f0f0f0;
+      --text-secondary: #9ca3af;
+      --border: rgba(255,255,255,0.12);
+      --border-secondary: rgba(255,255,255,0.22);
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-secondary); color: var(--text); min-height: 100vh; }
+  .container { max-width: 600px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+  .page-title { font-size: 20px; font-weight: 500; }
+  .toggle { display: flex; background: var(--bg-secondary); border-radius: var(--radius-md); border: 0.5px solid var(--border); overflow: hidden; }
+  .toggle-opt { padding: 6px 14px; font-size: 13px; cursor: pointer; background: none; border: none; color: var(--text-secondary); }
+  .toggle-opt.active { background: var(--text); color: var(--bg); }
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .metric { background: var(--bg); border-radius: var(--radius-md); padding: 1rem; border: 0.5px solid var(--border); }
+  .metric-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 500; }
+  .metric-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .progress-wrap { background: var(--bg); border-radius: var(--radius-md); padding: 1rem 1rem 0.75rem; margin-bottom: 14px; border: 0.5px solid var(--border); }
+  .progress-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+  .progress-header span:last-child { font-weight: 500; }
+  .progress-track { background: var(--border); border-radius: 4px; height: 10px; position: relative; margin-bottom: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; background: var(--text); transition: width 0.4s; }
+  .ticks-overlay { position: absolute; inset: 0; pointer-events: none; }
+  .tick-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--bg-secondary); transform: translateX(-50%); }
+  .ticks-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+  .tick-lbl { font-size: 9px; color: var(--text-secondary); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.2; }
+  .tick-lbl.achieved { color: var(--text); font-weight: 500; }
+  .progress-remaining { font-size: 11px; color: var(--text-secondary); margin-top: 6px; }
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
+  .section-title { font-size: 12px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .workout-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .workout-card { padding: 10px 14px; border: 0.5px solid var(--border); border-radius: var(--radius-md); cursor: pointer; background: var(--bg); text-align: left; }
+  .workout-card.active { border-color: var(--text); background: var(--bg-secondary); }
+  .workout-card-title { font-size: 13px; font-weight: 500; }
+  .workout-card-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .row-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .ex-block { border-bottom: 0.5px solid var(--border); padding: 10px 0; }
+  .ex-block:last-child { border-bottom: none; padding-bottom: 0; }
+  .ex-block:first-child { padding-top: 0; }
+  .ex-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .ex-name { font-size: 14px; font-weight: 500; }
+  .ex-prescribed { font-size: 11px; color: var(--text-secondary); margin-left: 6px; }
+  .col-headers { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; padding-left: 0; }
+  .col-spacer { width: 44px; flex-shrink: 0; }
+  .col-hdr { width: 60px; font-size: 11px; color: var(--text-secondary); text-align: center; white-space: nowrap; }
+  .col-at { font-size: 11px; color: transparent; width: 12px; flex-shrink: 0; }
+  .set-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .set-label { font-size: 12px; color: var(--text-secondary); width: 44px; flex-shrink: 0; }
+  input[type=number] { width: 60px; padding: 5px 6px; font-size: 13px; text-align: center; border: 0.5px solid var(--border); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text); -moz-appearance: textfield; }
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type=number]:focus { outline: none; border-color: var(--border-secondary); }
+  .sep { font-size: 11px; color: var(--text-secondary); }
+  .rm-set-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; }
+  .rm-ex-btn { background: none; border: none; font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+  .add-set-btn { font-size: 12px; background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 2px 0; margin-top: 2px; }
+  .add-set-btn:hover, .rm-set-btn:hover, .rm-ex-btn:hover { color: var(--text); }
+  .add-ex-btn { width: 100%; font-size: 13px; background: none; border: 0.5px dashed var(--border-secondary); border-radius: var(--radius-md); padding: 8px 14px; color: var(--text-secondary); cursor: pointer; margin-bottom: 10px; }
+  .add-ex-btn:hover { background: var(--bg-secondary); }
+  .custom-ex-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .custom-ex-input { flex: 1; padding: 8px 10px; font-size: 13px; border: 0.5px solid var(--border-secondary); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text); }
+  .custom-ex-input:focus { outline: none; border-color: var(--text); }
+  .custom-ex-confirm { padding: 8px 16px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-md); font-size: 13px; cursor: pointer; }
+  .custom-ex-cancel { padding: 8px 12px; background: none; border: 0.5px solid var(--border); border-radius: var(--radius-md); font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+  .save-btn { width: 100%; padding: 12px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-lg); font-size: 14px; font-weight: 500; cursor: pointer; position: relative; }
+  .save-btn:hover { opacity: 0.85; }
+  .save-btn:disabled { opacity: 0.4; cursor: default; }
+  .history-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+  .history-row:last-child { border-bottom: none; }
+  .history-date-main { font-size: 13px; font-weight: 500; }
+  .history-date-sub { font-size: 12px; color: var(--text-secondary); }
+  .history-wt { font-size: 13px; font-weight: 500; text-align: right; }
+  .history-running { font-size: 11px; color: var(--text-secondary); }
+  .empty-state { text-align: center; padding: 1.5rem; font-size: 14px; color: var(--text-secondary); }
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: var(--radius-md); font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+  .saving-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: var(--bg); border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-title">Workout tracker</div>
+    <div class="toggle">
+      <button class="toggle-opt active" id="unit-lbs" onclick="setUnit('lbs')">lbs</button>
+      <button class="toggle-opt" id="unit-kg" onclick="setUnit('kg')">kg</button>
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-label">Sessions logged</div>
+      <div class="metric-value" id="sessions-count">—</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">All-time total</div>
+      <div class="metric-value" id="all-time-display">—</div>
+      <div class="metric-sub" id="all-time-unit">lbs</div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <span style="color:var(--text-secondary);">Progress to 1,000,000 <span id="prog-unit">lbs</span></span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      <div class="ticks-overlay" id="ticks-overlay"></div>
+    </div>
+    <div class="ticks-labels" id="ticks-labels"></div>
+    <div class="progress-remaining" id="prog-remaining">Loading...</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Log -->
+  <div class="section-title">Log a session</div>
+  <div class="workout-picker">
+    <button class="workout-card active" id="wbtn-A" onclick="selectWorkout('A')">
+      <div class="workout-card-title">Workout A</div>
+      <div class="workout-card-sub">Full body — Thursday</div>
+    </button>
+    <button class="workout-card" id="wbtn-B" onclick="selectWorkout('B')">
+      <div class="workout-card-title">Workout B</div>
+      <div class="workout-card-sub">Upper body — Saturday</div>
+    </button>
+  </div>
+
+  <div class="row-header">
+    <span class="section-title" style="margin:0;">Exercises</span>
+    <span style="font-size:12px;color:var(--text-secondary);">Session total: <span id="session-total" style="font-weight:500;color:var(--text);">0</span></span>
+  </div>
+  <div class="card" id="exercise-list"></div>
+  <button class="add-ex-btn" id="add-ex-btn" onclick="showCustomExInput()">+ Add custom exercise</button>
+  <div class="custom-ex-row" id="custom-ex-row" style="display:none;">
+    <input class="custom-ex-input" id="custom-ex-input" type="text" placeholder="Exercise name" onkeydown="customExKey(event)">
+    <button class="custom-ex-confirm" onclick="confirmCustomEx()">Add</button>
+    <button class="custom-ex-cancel" onclick="hideCustomExInput()">Cancel</button>
+  </div>
+  <button class="save-btn" id="save-btn" onclick="saveSession()">Save session</button>
+
+  <hr class="divider">
+
+  <!-- History -->
+  <div class="section-title">Session history</div>
+  <div class="card" id="history-list">
+    <div class="empty-state">Loading history...</div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Supabase config ──────────────────────────────────────────────
+const SUPA_URL = 'https://sljfwscxeyzbmqrjtlrf.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsamZ3c2N4ZXl6Ym1xcmp0bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNDM4MDQsImV4cCI6MjA5MDYxOTgwNH0.uv5qiXH1-z49scE8PMWuKsTxfzk86NMqsG_hjAJze6s';
+
+async function dbFetch(path, options = {}) {
+  const res = await fetch(SUPA_URL + '/rest/v1/' + path, {
+    ...options,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || 'return=representation',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// ── Workout definitions ──────────────────────────────────────────
+const WORKOUTS = {
+  A: { exercises: [
+    { name: 'Goblet squat (50 lb KB)', prescribed: '4 × 12–15' },
+    { name: 'Romanian deadlift (dumbbells)', prescribed: '4 × 10–12' },
+    { name: 'Push-up or dumbbell bench press', prescribed: '3 × 12–15' },
+    { name: 'KB swing (50 lb)', prescribed: '4 × 15–20' },
+    { name: 'Dumbbell row (each side)', prescribed: '3 × 12' },
+    { name: 'Reverse lunge (dumbbells)', prescribed: '3 × 10/leg' },
+    { name: 'Plank / dead bug', prescribed: '3 × 30–45s' },
+    { name: 'Pull-up or band pull-apart', prescribed: '3 × max / 15' },
+  ]},
+  B: { exercises: [
+    { name: 'Dumbbell shoulder press', prescribed: '3 × 12' },
+    { name: 'Dumbbell bicep curl', prescribed: '3 × 12–15' },
+    { name: 'Dumbbell tricep extension', prescribed: '3 × 12' },
+    { name: 'KB halo (light)', prescribed: '3 × 8/direction' },
+    { name: 'Band clamshell', prescribed: '3 × 15/side' },
+    { name: 'Single-leg glute bridge', prescribed: '3 × 12/side' },
+  ]}
+};
+
+const KG = 0.453592;
+const GOAL_LBS = 1000000;
+
+let unit = 'lbs';
+let currentWorkout = 'A';
+let sessionData = [];
+let history = [];
+
+// ── Init ─────────────────────────────────────────────────────────
+function defaultSets(prescribed) {
+  const m = prescribed && prescribed.match(/^(\d+)/);
+  const n = m ? parseInt(m[1]) : 3;
+  return Array.from({length: n}, () => ({ reps: '', weight: '' }));
+}
+
+function initSession(w) {
+  return WORKOUTS[w].exercises.map(e => ({
+    name: e.name, prescribed: e.prescribed,
+    sets: defaultSets(e.prescribed), custom: false
+  }));
+}
+
+// ── Unit toggle ──────────────────────────────────────────────────
+function setUnit(u) {
+  unit = u;
+  document.getElementById('unit-lbs').classList.toggle('active', u === 'lbs');
+  document.getElementById('unit-kg').classList.toggle('active', u === 'kg');
+  renderExercises();
+  renderStats();
+  renderHistory();
+}
+
+// ── Workout picker ───────────────────────────────────────────────
+function selectWorkout(w) {
+  currentWorkout = w;
+  document.getElementById('wbtn-A').classList.toggle('active', w === 'A');
+  document.getElementById('wbtn-B').classList.toggle('active', w === 'B');
+  sessionData = initSession(w);
+  renderExercises();
+}
+
+// ── Exercise rendering ───────────────────────────────────────────
+function renderExercises() {
+  const list = document.getElementById('exercise-list');
+  list.innerHTML = sessionData.map((ex, ei) => `
+    <div class="ex-block">
+      <div class="ex-header">
+        <div>
+          <span class="ex-name">${ex.name}</span>
+          ${ex.prescribed ? `<span class="ex-prescribed">${ex.prescribed}</span>` : ''}
+        </div>
+        ${ex.custom ? `<button class="rm-ex-btn" onclick="removeExercise(${ei})">Remove</button>` : ''}
+      </div>
+      <div class="col-headers">
+        <span class="col-spacer"></span>
+        <span class="col-hdr">reps</span>
+        <span class="col-at">@</span>
+        <span class="col-hdr">weight (${unit})</span>
+      </div>
+      ${ex.sets.map((s, si) => `
+        <div class="set-row">
+          <span class="set-label">Set ${si + 1}</span>
+          <input type="number" min="0" placeholder="reps" value="${s.reps}" oninput="updSet(${ei},${si},'reps',this.value)">
+          <span class="sep">@</span>
+          <input type="number" min="0" placeholder="wt" value="${s.weight}" oninput="updSet(${ei},${si},'weight',this.value)">
+          ${ex.sets.length > 1 ? `<button class="rm-set-btn" onclick="removeSet(${ei},${si})">×</button>` : ''}
+        </div>
+      `).join('')}
+      <button class="add-set-btn" onclick="addSet(${ei})">+ add set</button>
+    </div>
+  `).join('');
+  updateSessionTotal();
+}
+
+function updSet(ei, si, field, val) { sessionData[ei].sets[si][field] = val; updateSessionTotal(); }
+function addSet(ei) { sessionData[ei].sets.push({ reps: '', weight: '' }); renderExercises(); }
+function removeSet(ei, si) { sessionData[ei].sets.splice(si, 1); renderExercises(); }
+function removeExercise(ei) { sessionData.splice(ei, 1); renderExercises(); }
+
+function showCustomExInput() {
+  document.getElementById('add-ex-btn').style.display = 'none';
+  const row = document.getElementById('custom-ex-row');
+  row.style.display = 'flex';
+  document.getElementById('custom-ex-input').focus();
+}
+
+function hideCustomExInput() {
+  document.getElementById('custom-ex-row').style.display = 'none';
+  document.getElementById('custom-ex-input').value = '';
+  document.getElementById('add-ex-btn').style.display = 'block';
+}
+
+function confirmCustomEx() {
+  const name = document.getElementById('custom-ex-input').value.trim();
+  if (!name) return;
+  sessionData.push({ name, prescribed: '', sets: [{ reps: '', weight: '' }], custom: true });
+  hideCustomExInput();
+  renderExercises();
+}
+
+function customExKey(e) {
+  if (e.key === 'Enter') confirmCustomEx();
+  if (e.key === 'Escape') hideCustomExInput();
+}
+
+function calcSessionLbs() {
+  let total = 0;
+  sessionData.forEach(ex => ex.sets.forEach(s => {
+    const r = parseFloat(s.reps) || 0;
+    const w = parseFloat(s.weight) || 0;
+    total += r * (unit === 'lbs' ? w : w / KG);
+  }));
+  return total;
+}
+
+function updateSessionTotal() {
+  const lbs = calcSessionLbs();
+  const disp = unit === 'lbs' ? lbs : lbs * KG;
+  document.getElementById('session-total').textContent = Math.round(disp).toLocaleString() + ' ' + unit;
+}
+
+// ── Save session ─────────────────────────────────────────────────
+async function saveSession() {
+  const totalLbs = calcSessionLbs();
+  if (totalLbs === 0) { showToast('Log at least one set with reps and weight.'); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="saving-spinner"></span>Saving...';
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' });
+
+  try {
+    await dbFetch('workout_sessions', {
+      method: 'POST',
+      body: JSON.stringify({
+        session_date: dateStr,
+        workout_type: currentWorkout,
+        total_lbs: Math.round(totalLbs * 100) / 100,
+        exercises: sessionData
+      })
+    });
+    sessionData = initSession(currentWorkout);
+    renderExercises();
+    await loadHistory();
+    showToast('Session saved!');
+  } catch(e) {
+    showToast('Error saving — check console.');
+    console.error(e);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Save session';
+}
+
+// ── Load history ─────────────────────────────────────────────────
+async function loadHistory() {
+  try {
+    const rows = await dbFetch('workout_sessions?select=*&order=created_at.desc', { prefer: '' });
+    history = rows || [];
+    renderStats();
+    renderHistory();
+  } catch(e) {
+    console.error('Failed to load history:', e);
+    document.getElementById('history-list').innerHTML = '<div class="empty-state">Could not load history.</div>';
+  }
+}
+
+// ── Stats & progress ─────────────────────────────────────────────
+function renderStats() {
+  const totalLbs = history.reduce((sum, s) => sum + parseFloat(s.total_lbs), 0);
+  const disp = unit === 'lbs' ? totalLbs : totalLbs * KG;
+  const goalDisp = unit === 'lbs' ? GOAL_LBS : GOAL_LBS * KG;
+  const pct = Math.min(100, (totalLbs / GOAL_LBS) * 100);
+  const remaining = Math.max(0, goalDisp - disp);
+
+  document.getElementById('sessions-count').textContent = history.length;
+  document.getElementById('all-time-display').textContent = Math.round(disp).toLocaleString();
+  document.getElementById('all-time-unit').textContent = unit;
+  document.getElementById('prog-pct').textContent = pct < 0.01 ? '0%' : pct.toFixed(2) + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('prog-remaining').textContent = Math.round(remaining).toLocaleString() + ' ' + unit + ' to go';
+  document.getElementById('prog-unit').textContent = unit;
+
+  const milestones = [10,20,30,40,50,60,70,80,90,100];
+  document.getElementById('ticks-overlay').innerHTML = milestones.map(t =>
+    `<div class="tick-line" style="left:${t}%"></div>`
+  ).join('');
+  document.getElementById('ticks-labels').innerHTML = milestones.map(t =>
+    `<div class="tick-lbl ${pct >= t ? 'achieved' : ''}">
+      <span>|</span><span>${t}%</span>
+    </div>`
+  ).join('');
+}
+
+// ── History list ─────────────────────────────────────────────────
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  if (!history.length) {
+    el.innerHTML = '<div class="empty-state">No sessions yet. Log your first workout!</div>';
+    return;
+  }
+  // running total ascending, display descending
+  const asc = [...history].reverse();
+  let running = 0;
+  const runMap = {};
+  asc.forEach(s => { running += parseFloat(s.total_lbs); runMap[s.id] = running; });
+
+  el.innerHTML = history.map(s => {
+    const disp = unit === 'lbs' ? parseFloat(s.total_lbs) : parseFloat(s.total_lbs) * KG;
+    const runDisp = unit === 'lbs' ? runMap[s.id] : runMap[s.id] * KG;
+    return `<div class="history-row">
+      <div>
+        <div class="history-date-main">${s.session_date}</div>
+        <div class="history-date-sub">Workout ${s.workout_type}</div>
+      </div>
+      <div>
+        <div class="history-wt">${Math.round(disp).toLocaleString()} ${unit}</div>
+        <div class="history-running">Running total: ${Math.round(runDisp).toLocaleString()} ${unit}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Toast ────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Boot ─────────────────────────────────────────────────────────
+sessionData = initSession(currentWorkout);
+renderExercises();
+loadHistory();
+</script>
+</body>
+</html>
