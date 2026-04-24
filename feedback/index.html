@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEM Feedback Form</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-50: #E6F1FB;
+    --blue-100: #B5D4F4;
+    --blue-400: #378ADD;
+    --blue-600: #185FA5;
+    --blue-800: #0C447C;
+    --teal-50: #E1F5EE;
+    --teal-200: #5DCAA5;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --green-50: #EAF3DE;
+    --green-600: #3B6D11;
+    --green-800: #27500A;
+    --amber-50: #FAEEDA;
+    --amber-200: #EF9F27;
+    --amber-600: #854F0B;
+    --amber-800: #633806;
+    --coral-50: #FAECE7;
+    --coral-200: #F0997B;
+    --coral-600: #993C1D;
+    --coral-800: #712B13;
+    --gray-50: #F1EFE8;
+    --gray-100: #D3D1C7;
+    --gray-200: #B4B2A9;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #444441;
+    --purple-50: #EEEDFE;
+    --purple-600: #534AB7;
+    --purple-800: #3C3489;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #ffffff;
+    color: #2C2C2A;
+    min-height: 100vh;
+    font-size: 15px;
+  }
+
+  .app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 340px;
+    min-width: 340px;
+    background: #ffffff;
+    border-right: 1px solid var(--gray-100);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 24px 24px 0;
+    border-bottom: 1px solid var(--gray-100);
+    background: #fff;
+  }
+
+  .app-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--blue-800);
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+
+  .app-subtitle {
+    font-size: 11px;
+    color: var(--gray-400);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+  }
+
+  /* TRAINEE CONFIG */
+  .trainee-config {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .config-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--gray-400);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .trainee-type-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .type-btn {
+    border: 1px solid var(--gray-100);
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.3;
+  }
+
+  .type-btn:hover {
+    border-color: var(--blue-400);
+    color: var(--blue-600);
+    background: var(--blue-50);
+  }
+
+  .type-btn.active {
+    border-color: var(--blue-400);
+    background: var(--blue-50);
+    color: var(--blue-800);
+  }
+
+  .type-btn .type-tag {
+    display: block;
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--gray-400);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .type-btn.active .type-tag { color: var(--blue-600); }
+
+  .specialty-select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--gray-800);
+    background: #fff;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888780' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+
+  .specialty-select:focus { outline: none; border-color: var(--blue-400); }
+
+  /* DOMAIN TABS */
+  .domain-nav {
+    padding: 12px 24px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .domain-nav-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--gray-400);
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .domain-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .domain-tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--gray-600);
+    font-weight: 400;
+    transition: all 0.12s;
+    border: 1px solid transparent;
+  }
+
+  .domain-tab:hover {
+    background: var(--gray-50);
+    color: var(--gray-800);
+  }
+
+  .domain-tab.active {
+    background: var(--blue-50);
+    color: var(--blue-800);
+    font-weight: 500;
+    border-color: transparent;
+  }
+
+  .domain-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .domain-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--gray-400);
+    background: var(--gray-50);
+    border-radius: 20px;
+    padding: 1px 7px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .domain-tab.active .domain-count {
+    background: var(--blue-100);
+    color: var(--blue-600);
+  }
+
+  /* MAIN CONTENT */
+  .main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #fafaf8;
+  }
+
+  .panel-header {
+    background: #fff;
+    border-bottom: 1px solid var(--gray-100);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2C2C2A;
+  }
+
+  .panel-subtitle {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+  }
+
+  .filter-btn {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--gray-100);
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--gray-600);
+    cursor: pointer;
+    font-weight: 400;
+    transition: all 0.12s;
+  }
+
+  .filter-btn:hover { border-color: var(--gray-200); background: var(--gray-50); }
+
+  .filter-btn.active-all { border-color: var(--gray-400); color: var(--gray-800); background: var(--gray-50); }
+  .filter-btn.active-pos { border-color: var(--green-600); color: var(--green-800); background: var(--green-50); }
+  .filter-btn.active-mod { border-color: var(--amber-600); color: var(--amber-800); background: var(--amber-50); }
+  .filter-btn.active-con { border-color: var(--coral-600); color: var(--coral-800); background: var(--coral-50); }
+
+  .feedback-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .feedback-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--gray-100);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.12s;
+    user-select: none;
+  }
+
+  .feedback-item:hover {
+    border-color: var(--gray-200);
+    background: #fff;
+    transform: translateX(1px);
+  }
+
+  .feedback-item.selected {
+    border-color: var(--blue-400);
+    background: var(--blue-50);
+  }
+
+  .feedback-item.selected .fb-text { color: var(--blue-800); }
+
+  .fb-tone-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .dot-pos { background: var(--green-600); }
+  .dot-mod { background: var(--amber-200); }
+  .dot-con { background: var(--coral-200); }
+
+  .fb-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #2C2C2A;
+    flex: 1;
+  }
+
+  .fb-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--gray-200);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    background: #fff;
+    transition: all 0.12s;
+  }
+
+  .feedback-item.selected .fb-check {
+    background: var(--blue-400);
+    border-color: var(--blue-400);
+    color: #fff;
+  }
+
+  /* SECTION HEADER inside list */
+  .section-header-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 2px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--gray-400);
+    font-weight: 500;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--gray-100);
+  }
+
+  /* OUTPUT PANEL */
+  .output-panel {
+    width: 360px;
+    min-width: 360px;
+    background: #ffffff;
+    border-left: 1px solid var(--gray-100);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .output-header {
+    padding: 20px 20px 12px;
+    border-bottom: 1px solid var(--gray-100);
+    background: #fff;
+  }
+
+  .output-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .output-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2C2C2A;
+  }
+
+  .output-meta {
+    display: flex;
+    gap: 8px;
+  }
+
+  .meta-chip {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--blue-50);
+    color: var(--blue-800);
+    font-weight: 500;
+    border: 1px solid var(--blue-100);
+  }
+
+  .trainee-name-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--gray-800);
+    background: #fff;
+    margin-bottom: 8px;
+  }
+
+  .trainee-name-input::placeholder { color: var(--gray-400); }
+  .trainee-name-input:focus { outline: none; border-color: var(--blue-400); }
+
+  .rotation-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--gray-800);
+    background: #fff;
+  }
+  .rotation-input::placeholder { color: var(--gray-400); }
+  .rotation-input:focus { outline: none; border-color: var(--blue-400); }
+
+  .output-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+  }
+
+  .output-section {
+    margin-bottom: 16px;
+  }
+
+  .output-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--gray-400);
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .output-section-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .output-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .output-item {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #2C2C2A;
+    padding: 8px 10px;
+    background: var(--gray-50);
+    border-radius: 7px;
+    border-left: 2px solid transparent;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .output-item.pos { border-color: var(--green-600); background: var(--green-50); }
+  .output-item.mod { border-color: var(--amber-200); background: var(--amber-50); }
+  .output-item.con { border-color: var(--coral-200); background: var(--coral-50); }
+
+  .remove-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-200);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    margin-top: 1px;
+    transition: color 0.1s;
+  }
+
+  .remove-btn:hover { color: var(--coral-600); }
+
+  .empty-output {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray-400);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .empty-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    opacity: 0.4;
+  }
+
+  .output-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+  }
+
+  .copy-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--blue-400);
+    background: var(--blue-50);
+    color: var(--blue-800);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .copy-btn:hover { background: var(--blue-100); }
+  .copy-btn:active { transform: scale(0.99); }
+  .copy-btn.copied { background: var(--green-50); border-color: var(--green-600); color: var(--green-800); }
+
+  .clear-btn {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-100);
+    background: #fff;
+    color: var(--gray-600);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .clear-btn:hover { border-color: var(--coral-200); color: var(--coral-600); background: var(--coral-50); }
+
+  .selected-count {
+    font-size: 11px;
+    color: var(--gray-400);
+    text-align: center;
+  }
+
+  .selected-count span { color: var(--blue-600); font-weight: 600; }
+
+  .no-items-msg {
+    text-align: center;
+    padding: 20px;
+    color: var(--gray-400);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .domain-tab.fellow-only {
+    border-top: 1px solid var(--gray-100);
+    margin-top: 4px;
+    padding-top: 12px;
+  }
+  .domain-tab.fellow-only .fellow-badge {
+    font-size: 9px;
+    background: var(--teal-50);
+    color: var(--teal-600);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    margin-left: 2px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gray-100); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gray-200); }
+
+  .domain-list-scroll {
+    overflow-y: auto;
+    flex: 1;
+    padding: 8px 12px 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="app-title">PEM Feedback Form</div>
+      <div class="app-subtitle">Royal College · CanMEDS Framework</div>
+    </div>
+
+    <div class="trainee-config">
+      <div class="config-label">Trainee Level</div>
+      <div class="trainee-type-grid">
+        <button class="type-btn active" onclick="setType('junior')" id="btn-junior">
+          Junior
+          <span class="type-tag">FM / PGY1–2</span>
+        </button>
+        <button class="type-btn" onclick="setType('senior')" id="btn-senior">
+          Senior
+          <span class="type-tag">Peds / PGY3–5</span>
+        </button>
+        <button class="type-btn" onclick="setType('fellow')" id="btn-fellow">
+          Fellow
+          <span class="type-tag">PEM / Sub-spec</span>
+        </button>
+      </div>
+
+      <div class="config-label">Specialty / Program</div>
+      <select class="specialty-select" id="specialty-select" onchange="setSpecialty(this.value)">
+        <option value="fm">Family Medicine</option>
+        <option value="peds">Pediatrics</option>
+        <option value="em">Emergency Medicine</option>
+        <option value="pem" selected>Pediatric Emergency Medicine</option>
+        <option value="neonat">Neonatology</option>
+        <option value="picu">Pediatric Critical Care</option>
+        <option value="other">Other Subspecialty</option>
+      </select>
+    </div>
+
+    <div class="domain-nav">
+      <div class="domain-nav-label">Feedback Domains</div>
+    </div>
+
+    <div class="domain-list-scroll">
+      <div class="domain-tabs" id="domain-tabs">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN FEEDBACK PANEL -->
+  <div class="main-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title" id="panel-title">History & Physical Examination</div>
+        <div class="panel-subtitle" id="panel-subtitle">Select feedback statements to add to your report</div>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active-all" id="f-all" onclick="setFilter('all')">All</button>
+        <button class="filter-btn" id="f-pos" onclick="setFilter('pos')">Positive</button>
+        <button class="filter-btn" id="f-mod" onclick="setFilter('mod')">Mixed</button>
+        <button class="filter-btn" id="f-con" onclick="setFilter('con')">Constructive</button>
+      </div>
+    </div>
+
+    <div class="feedback-list" id="feedback-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="output-panel">
+    <div class="output-header">
+      <div class="output-title-row">
+        <div class="output-title">Feedback Report</div>
+        <div class="output-meta">
+          <span class="meta-chip" id="meta-level">Junior</span>
+          <span class="meta-chip" id="meta-spec">PEM</span>
+        </div>
+      </div>
+      <input type="text" class="trainee-name-input" id="trainee-name" placeholder="Trainee name (optional)" />
+      <input type="text" class="rotation-input" id="rotation-input" placeholder="Rotation / date (optional)" />
+    </div>
+
+    <div class="output-body" id="output-body">
+      <div class="empty-output" id="empty-msg">
+        <div class="empty-icon">📋</div>
+        <div>Click any feedback statement<br>in the centre panel to add it here.</div>
+      </div>
+    </div>
+
+    <div class="output-footer">
+      <div class="selected-count" id="selected-count"><span>0</span> items selected</div>
+      <button class="copy-btn" id="copy-btn" onclick="copyToClipboard()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy to Clipboard
+      </button>
+      <button class="clear-btn" onclick="clearAll()">Clear all selected</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DOMAIN_COLORS = {
+  'history': { dot: '#185FA5', cls: 'c-blue' },
+  'knowledge': { dot: '#534AB7', cls: 'c-purple' },
+  'judgement': { dot: '#0F6E56', cls: 'c-teal' },
+  'decisions': { dot: '#3B6D11', cls: 'c-green' },
+  'emergency': { dot: '#993C1D', cls: 'c-coral' },
+  'procedures': { dot: '#854F0B', cls: 'c-amber' },
+  'communication': { dot: '#993556', cls: 'c-pink' },
+  'teaching': { dot: '#185FA5', cls: 'c-blue' },
+  'teamwork': { dot: '#0F6E56', cls: 'c-teal' },
+  'professionalism': { dot: '#444441', cls: 'c-gray' },
+  'documentation': { dot: '#534AB7', cls: 'c-purple' },
+  'other': { dot: '#1D9E75', cls: 'c-teal' },
+};
+
+const DOMAINS = [
+  { id: 'history', label: 'History & Physical Exam', epa: 'TTD #1, F-EPA #5, C-EPA #3' },
+  { id: 'knowledge', label: 'Medical Knowledge', epa: 'CanMEDS ME 1.3' },
+  { id: 'judgement', label: 'Clinical Reasoning', epa: 'F-EPA #1, C-EPA #4' },
+  { id: 'decisions', label: 'Decision Making', epa: 'C-EPA #4, TTP #1' },
+  { id: 'emergency', label: 'Emergency Performance', epa: 'F-EPA #1, C-EPA #1–2' },
+  { id: 'procedures', label: 'Technical Skills & Procedures', epa: 'F-EPA #7, C-EPA #8–9' },
+  { id: 'communication', label: 'Communication & Families', epa: 'F-EPA #4, C-EPA #10–11' },
+  { id: 'teaching', label: 'Teaching & Scholarship', epa: 'C-EPA #13–14, TTP-PEM #1' },
+  { id: 'teamwork', label: 'Teamwork & Collaboration', epa: 'F-EPA #5, C-EPA #1' },
+  { id: 'professionalism', label: 'Professionalism', epa: 'CanMEDS P 1.1' },
+  { id: 'documentation', label: 'Documentation', epa: 'F-EPA #9, C-EPA #3' },
+  { id: 'other', label: 'Other: Staff Physician in Training', epa: 'TTP #1–2, CanMEDS L 4.1', fellowOnly: true },
+];
+
+const FEEDBACK = {
+  history: {
+    junior: [
+      { tone: 'pos', text: 'Performed a focused and relevant history for the presenting complaint, appropriately adapting their questioning to the child\'s age and developmental stage.' },
+      { tone: 'pos', text: 'Demonstrated a patient- and family-centred approach during the history, establishing good rapport with parents and engaging the child appropriately.' },
+      { tone: 'pos', text: 'Consistently identified pertinent positives and negatives, producing a well-organized case presentation to the supervisor.' },
+      { tone: 'mod', text: 'History-taking was generally thorough; continued practice incorporating birth and developmental history for younger patients would further strengthen assessments.' },
+      { tone: 'mod', text: 'Physical examination was competent. Developing a more systematic approach to the pediatric exam across all age groups will improve efficiency over time.' },
+      { tone: 'con', text: 'History would benefit from being more focused on the presenting complaint; consider prioritizing key features before exploring broader background information.' },
+      { tone: 'con', text: 'Encouraged to practice examining neonates and infants more frequently to build confidence and efficiency in this age group, as per EPA requirements.' },
+      { tone: 'con', text: 'Case presentations would be strengthened by summarizing a prioritized problem list and differential diagnosis at the end of the encounter.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Elicited a comprehensive history that efficiently captured all relevant medical, developmental, and psychosocial information, reflecting strong patient-centred communication.' },
+      { tone: 'pos', text: 'Physical examination was thorough and well-adapted to the child\'s age and comfort level, minimizing distress without omitting key elements.' },
+      { tone: 'pos', text: 'Consistently sought collateral information from family members and the medical record, synthesizing this effectively into a clear clinical summary.' },
+      { tone: 'mod', text: 'Assessment is thorough; as complexity increases, focusing on the most clinically relevant components will improve efficiency in the emergency setting.' },
+      { tone: 'mod', text: 'Generally strong history skills; integrating social determinants of health and family context more consistently would round out assessments for complex patients.' },
+      { tone: 'con', text: 'Would benefit from additional practice with the undifferentiated or complex patient, where competing diagnostic possibilities require a broader, more structured approach.' },
+      { tone: 'con', text: 'Encouraged to refine case presentations so that clinical reasoning and differential diagnosis are clearly articulated, not just the findings themselves.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Demonstrates expert-level history-taking skills, efficiently synthesizing complex multisystem presentations including pertinent psychosocial and family context.' },
+      { tone: 'pos', text: 'Physical examination technique is precise and efficient, confidently adapted across all pediatric age groups including neonates under time pressure.' },
+      { tone: 'pos', text: 'Presentations to the team are consistently concise, diagnostically driven, and reflect sound integration of clinical findings with evidence-based reasoning.' },
+      { tone: 'mod', text: 'Clinical assessments are strong; in high-acuity scenarios, continuing to model explicit articulation of reasoning for junior learners will further develop teaching skills.' },
+      { tone: 'con', text: 'In rare complex cases, consider systematically revisiting the history after initial stabilization to ensure no key features are missed under time pressure.' },
+    ],
+  },
+  knowledge: {
+    junior: [
+      { tone: 'pos', text: 'Demonstrated a solid baseline understanding of common pediatric conditions encountered in the ED, including appropriate first-line management strategies.' },
+      { tone: 'pos', text: 'Applied knowledge of pediatric physiology appropriately when explaining diagnostic reasoning, including relevant differences from adult medicine.' },
+      { tone: 'mod', text: 'Knowledge of common presentations is good; building familiarity with less common but high-stakes diagnoses (e.g., septic arthritis, intussusception) will be valuable.' },
+      { tone: 'mod', text: 'Understanding of pediatric pharmacology is developing; working with a drug reference tool and reviewing weight-based dosing principles regularly will build confidence.' },
+      { tone: 'con', text: 'Encouraged to supplement clinical experience with independent reading on core pediatric emergency conditions to consolidate a stronger foundational knowledge base.' },
+      { tone: 'con', text: 'Would benefit from reviewing NRP and PALS protocols to increase comfort with resuscitation algorithms across age groups.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Demonstrated broad and clinically applicable knowledge across pediatric subspecialties, including ability to integrate evidence-based medicine into management decisions.' },
+      { tone: 'pos', text: 'Consistently applied knowledge of pathophysiology to construct well-reasoned differentials and thoughtful management plans for complex patients.' },
+      { tone: 'mod', text: 'Knowledge base is strong overall; further developing familiarity with cutting-edge evidence and updated guidelines in high-yield PEM topics will be beneficial.' },
+      { tone: 'con', text: 'For patients with complex chronic conditions, consider proactively reviewing subspecialty guidelines and involving relevant consultants early in the course of care.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Exhibits an advanced and nuanced knowledge base across the breadth of pediatric emergency medicine, integrating current literature into clinical decision-making.' },
+      { tone: 'pos', text: 'Demonstrates ability to apply emerging evidence and critical appraisal skills to rapidly update management approaches in high-acuity scenarios.' },
+      { tone: 'mod', text: 'Knowledge is excellent; continued engagement with academic forums, journal clubs, and scholarly work will support development as a future clinician-educator.' },
+      { tone: 'con', text: 'Encouraged to deepen knowledge in a chosen area of scholarly focus to support the development of a distinct academic identity as training concludes.' },
+    ],
+  },
+  judgement: {
+    junior: [
+      { tone: 'pos', text: 'Demonstrated good clinical instinct in recognizing acutely unwell patients, appropriately prioritizing assessment and seeking timely assistance.' },
+      { tone: 'pos', text: 'Constructed reasonable differential diagnoses for common presentations, demonstrating thoughtful consideration of both typical and atypical features.' },
+      { tone: 'mod', text: 'Clinical reasoning is developing; articulating a structured differential diagnosis and the rationale for investigations at each patient encounter will accelerate growth.' },
+      { tone: 'mod', text: 'Generally good situational awareness; continuing to practice reassessing patients systematically after initial treatment will strengthen clinical judgement.' },
+      { tone: 'con', text: 'Encouraged to avoid premature diagnostic closure — when a patient does not improve as expected, revisiting the differential broadly is an important habit to develop.' },
+      { tone: 'con', text: 'Would benefit from structured reflection after challenging cases to identify key decision points and incorporate lessons into future clinical reasoning.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Demonstrated mature clinical reasoning, efficiently narrowing differentials and adapting management plans in response to evolving patient status.' },
+      { tone: 'pos', text: 'Showed strong contextual judgement by integrating clinical data with social determinants and family preferences in developing individualized care plans.' },
+      { tone: 'mod', text: 'Clinical judgement is well-developed; in high-uncertainty scenarios, explicitly verbalizing reasoning for the team supports learning and ensures shared understanding.' },
+      { tone: 'con', text: 'For undifferentiated or atypical presentations, a more systematic consideration of all plausible diagnoses before committing to a management path would be beneficial.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Clinical reasoning is consistently sophisticated, demonstrating nuanced integration of clinical findings, investigations, and patient context in complex, multisystem cases.' },
+      { tone: 'pos', text: 'Exhibits excellent diagnostic calibration — appropriately confident with common presentations and appropriately cautious with undifferentiated or high-risk cases.' },
+      { tone: 'mod', text: 'Reasoning skills are exceptional; an opportunity exists to make implicit reasoning more explicit in teaching encounters to model decision-making for junior learners.' },
+      { tone: 'con', text: 'In resource-limited or high-volume situations, consider using structured frameworks to ensure systematic assessment is maintained under pressure.' },
+    ],
+  },
+  decisions: {
+    junior: [
+      { tone: 'pos', text: 'Formulated sensible initial management plans for common presentations, selecting appropriate investigations without unnecessary testing.' },
+      { tone: 'pos', text: 'Recognized the limits of their own decision-making and sought timely guidance from supervisors, which is an important sign of professional maturity.' },
+      { tone: 'mod', text: 'Management plans are generally sound; gaining more experience with the evidence base for common conditions will support increasingly confident and efficient decision-making.' },
+      { tone: 'mod', text: 'Good at first-line decisions; developing comfort with disposition choices — admission versus discharge, with clear safety net instructions — is a key next step.' },
+      { tone: 'con', text: 'Encouraged to practice articulating a clear management plan with rationale before presenting to a supervisor, rather than waiting for direction.' },
+      { tone: 'con', text: 'Consider developing a mental checklist for discharge decisions to ensure safety net instructions, follow-up plans, and return precautions are consistently addressed.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Consistently made evidence-informed management decisions, demonstrating appropriate resource stewardship and consideration of both clinical and family context.' },
+      { tone: 'pos', text: 'Disposition decisions were well-reasoned, with clear communication of rationale to families and documentation of the clinical basis for admission or discharge.' },
+      { tone: 'mod', text: 'Decisions are well-grounded; in cases of diagnostic uncertainty, exploring a broader range of management options before committing would further strengthen this skill.' },
+      { tone: 'con', text: 'For patients with competing chronic and acute issues, establishing a structured priority list at the outset of care will help guide sequenced decision-making.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Independently makes sound, high-stakes clinical decisions including complex disposition choices, PICU escalation, and critical care consultations.' },
+      { tone: 'pos', text: 'Demonstrates excellent integration of best evidence, institutional resources, and patient-family values in formulating individualized care plans.' },
+      { tone: 'mod', text: 'Decision-making is at an advanced level; narrating decision rationale explicitly during clinical rounds would enhance its educational value for learners.' },
+      { tone: 'con', text: 'Encouraged to engage with the emerging literature on shared decision-making tools in PEM to further incorporate patient and family preferences into management.' },
+    ],
+  },
+  emergency: {
+    junior: [
+      { tone: 'pos', text: 'Remained composed during an acute resuscitation, performing their assigned role effectively as a team member and following direction from the team leader.' },
+      { tone: 'pos', text: 'Appropriately recognized early signs of clinical deterioration and escalated concerns to the supervising physician promptly and clearly.' },
+      { tone: 'mod', text: 'Performed well in acute scenarios; continued exposure to simulated and real resuscitations will build confidence in initiating the ABCs independently.' },
+      { tone: 'mod', text: 'Situational awareness in emergencies is developing; practicing structured SBAR handovers and closed-loop communication will help in high-stress situations.' },
+      { tone: 'con', text: 'Encouraged to review pediatric resuscitation algorithms (PALS, NRP) regularly so that key sequences are automatic during real time-pressured scenarios.' },
+      { tone: 'con', text: 'In emergencies, try to verbalize assessment findings and actions clearly — this supports the team, documents the thought process, and improves safety.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Functioned effectively as a resuscitation team member, demonstrating focused and time-efficient assessment while maintaining situational awareness throughout.' },
+      { tone: 'pos', text: 'Applied resuscitation protocols accurately and with clinical adaptability, adjusting interventions appropriately as the patient\'s status evolved.' },
+      { tone: 'mod', text: 'Strong in acute scenarios; transitioning toward a leadership role in resuscitations — directing tasks, using closed-loop communication, and delegating clearly — is the next step.' },
+      { tone: 'con', text: 'When managing multiple acute patients simultaneously, consider explicitly reprioritizing the workload aloud to help team members align on the most urgent needs.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Demonstrated expert crisis resource management in high-acuity resuscitations, clearly leading the team, delegating tasks, and maintaining situational awareness throughout.' },
+      { tone: 'pos', text: 'Showed clinical composure and decisive leadership in time-critical scenarios, integrating procedures, medication management, and team communication seamlessly.' },
+      { tone: 'pos', text: 'Consistently initiated post-resuscitation debriefs, supporting team learning and psychological safety following high-stress events.' },
+      { tone: 'mod', text: 'Crisis leadership is excellent; continuing to work on narrating decision-making in real-time will further model expert performance for junior trainees.' },
+      { tone: 'con', text: 'In complex multi-system cases, explicitly articulating reassessment triggers for the team (e.g., "if BP doesn\'t respond in 15 minutes, we will…") would enhance team preparedness.' },
+    ],
+  },
+  procedures: {
+    junior: [
+      { tone: 'pos', text: 'Performed basic procedural skills (e.g., IV access, venipuncture, bag-mask ventilation) with appropriate technique, including aseptic precautions and patient positioning.' },
+      { tone: 'pos', text: 'Sought appropriate supervision before procedures, obtained verbal consent clearly, and documented findings accurately post-procedure.' },
+      { tone: 'mod', text: 'Procedural confidence is growing; additional supervised practice with lumbar punctures and intraosseous access will build competence in these core skills.' },
+      { tone: 'mod', text: 'Technique is developing well; continuing to practice procedural sedation planning and selection will prepare for increasingly independent practice.' },
+      { tone: 'con', text: 'Encouraged to proactively set up the procedural environment (equipment, lighting, positioning, analgesia) before beginning, to improve efficiency and patient comfort.' },
+      { tone: 'con', text: 'When a procedure is technically challenging, verbalizing a plan and seeking assistance early reflects good professional judgment — this is always encouraged.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Performed a range of procedures competently and safely, including appropriate use of procedural sedation, pain management, and post-procedure monitoring.' },
+      { tone: 'pos', text: 'Demonstrated skilled technique for advanced procedures (e.g., lumbar puncture, intubation, chest tube) with appropriate attention to safety and patient comfort.' },
+      { tone: 'mod', text: 'Core procedures are well-performed; expanding experience with ultrasound-guided techniques and POCUS-directed procedures will further round out the procedural skill set.' },
+      { tone: 'con', text: 'Consider taking a more anticipatory approach to procedural complications — reviewing potential adverse events with the team before beginning complex procedures.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Performs the full scope of PEM procedures with expert-level technique, efficiency, and situational adaptation, including in high-acuity emergencies.' },
+      { tone: 'pos', text: 'Demonstrates excellent POCUS skills across a variety of indications including cardiac, lung, soft tissue, and procedural guidance.' },
+      { tone: 'mod', text: 'Procedural skills are excellent; continuing to develop a teaching approach for procedures will help in the transition to independent practice and supervision of junior learners.' },
+      { tone: 'con', text: 'Encouraged to develop structured informed consent conversations for procedures, particularly for anxious families, to ensure clarity and shared understanding.' },
+    ],
+  },
+  communication: {
+    junior: [
+      { tone: 'pos', text: 'Communicated effectively with patients and families, using plain language, checking understanding, and welcoming questions throughout the encounter.' },
+      { tone: 'pos', text: 'Demonstrated empathy and cultural awareness in interactions with families, particularly in emotionally challenging situations.' },
+      { tone: 'mod', text: 'Communication is generally strong; adapting language and approach for adolescent patients versus toddlers and their parents will continue to develop with experience.' },
+      { tone: 'mod', text: 'Discharge conversations are improving; a structured checklist approach (diagnosis, treatment, return precautions, follow-up) would help ensure completeness.' },
+      { tone: 'con', text: 'When delivering uncertain or complex information to families, pausing to check understanding and inviting questions supports shared decision-making and reduces anxiety.' },
+      { tone: 'con', text: 'Encouraged to develop a consistent approach to introducing themselves and explaining their role, particularly in busy ED environments where families may feel disoriented.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Led family meetings and discharge conversations skillfully, demonstrating excellent balance of information delivery, emotional attunement, and shared decision-making.' },
+      { tone: 'pos', text: 'Handled an emotionally charged family encounter with composure and professionalism, effectively de-escalating tension while maintaining clear clinical communication.' },
+      { tone: 'mod', text: 'Communication skills are strong; continuing to develop experience with breaking bad news and goals of care conversations will prepare for the most complex situations in practice.' },
+      { tone: 'con', text: 'When using interpreters, ensure communication is consistently directed to the family — maintaining eye contact and speaking directly rather than through the interpreter.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Demonstrated expert-level communication across high-stakes encounters including breaking bad news, managing conflict, and goals of care discussions.' },
+      { tone: 'pos', text: 'Models outstanding family-centred communication, effectively integrating family context, values, and preferences into nuanced and compassionate conversations.' },
+      { tone: 'mod', text: 'Communication is consistently excellent; developing formalized teaching on communication skills for junior trainees would contribute meaningfully to the program.' },
+      { tone: 'con', text: 'In conflict situations, a brief structured "pause" to reset the encounter may be beneficial when interactions escalate, before proceeding to resolution.' },
+    ],
+  },
+  teaching: {
+    junior: [
+      { tone: 'pos', text: 'Took opportunities to informally teach medical students and junior learners, demonstrating enthusiasm for education and knowledge-sharing.' },
+      { tone: 'mod', text: 'Early in the development of formal teaching skills; beginning to identify specific teaching moments during clinical shifts will help build this competency progressively.' },
+      { tone: 'con', text: 'Encouraged to begin observing how senior residents and staff structure bedside teaching and feedback, as these are skills that develop throughout residency.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Provided clear and well-organized bedside teaching to junior trainees, identifying learning needs and adapting content accordingly.' },
+      { tone: 'pos', text: 'Delivered formal teaching (academic half day, case presentation) that was evidence-based, well-structured, and interactive.' },
+      { tone: 'mod', text: 'Teaching skills are growing; developing a consistent approach to providing direct, specific, and actionable feedback to junior learners is an important next step.' },
+      { tone: 'con', text: 'When providing feedback to junior learners, aim to include concrete behavioral examples to support the learner in understanding specific areas for improvement.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Demonstrates outstanding clinical teaching, consistently adapting instruction to the learner\'s level and using high-yield clinical encounters as teaching opportunities.' },
+      { tone: 'pos', text: 'Delivered a scholarly presentation that reflected sophisticated critical appraisal skills, integration of current evidence, and clear academic communication.' },
+      { tone: 'mod', text: 'Teaching is excellent; continuing to develop skills in giving feedback in challenging situations (e.g., struggling learners, performance concerns) will be valuable for future practice.' },
+      { tone: 'con', text: 'Encouraged to formalize a scholarly project or quality improvement initiative to establish a track record of academic contribution before completion of fellowship.' },
+    ],
+  },
+  teamwork: {
+    junior: [
+      { tone: 'pos', text: 'Worked respectfully and collaboratively with all members of the interprofessional team, including nurses, social workers, and allied health professionals.' },
+      { tone: 'pos', text: 'Responded promptly to requests from nursing and other team members, demonstrating professional reliability and team engagement.' },
+      { tone: 'mod', text: 'Team integration is developing well; proactively communicating updates and changes in patient status to nursing staff will further strengthen collaboration.' },
+      { tone: 'con', text: 'Encouraged to seek out the perspectives of non-physician team members more consistently — social workers, pharmacists, and child life specialists often have critical insights.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Functioned effectively as a senior team member, delegating tasks appropriately, supporting junior learners, and communicating clearly with the interprofessional team.' },
+      { tone: 'pos', text: 'Demonstrated strong collaborative skills during interprofessional encounters, effectively integrating input from nursing, social work, and consulting services.' },
+      { tone: 'mod', text: 'Teamwork is strong; continuing to develop skills in conflict navigation and respectful disagreement within the team will be valuable as responsibilities increase.' },
+      { tone: 'con', text: 'In high-volume or stressful periods, maintaining consistent communication with nursing partners helps prevent gaps in care and supports the whole team.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Models exemplary collaborative practice, consistently fostering a respectful and inclusive team environment and amplifying the contributions of all team members.' },
+      { tone: 'pos', text: 'Leads interprofessional team interactions with confidence, effectively managing competing priorities and advocating for patients while maintaining team cohesion.' },
+      { tone: 'mod', text: 'Team leadership is excellent; developing comfort with formal conflict resolution frameworks will further support challenging interprofessional interactions.' },
+      { tone: 'con', text: 'Encouraged to be mindful of how leadership style adapts in high-stress resuscitations — clear, calm direction is more effective than urgency-driven communication.' },
+    ],
+  },
+  professionalism: {
+    junior: [
+      { tone: 'pos', text: 'Consistently demonstrated professional and respectful behaviours toward patients, families, and all members of the health care team.' },
+      { tone: 'pos', text: 'Acknowledged uncertainty and the limits of personal knowledge appropriately, seeking assistance when needed without prompting.' },
+      { tone: 'mod', text: 'Professionalism is good overall; developing consistent punctuality and timely task completion under the pressures of an ED environment will be important to maintain.' },
+      { tone: 'con', text: 'Encouraged to proactively complete clinical responsibilities (documentation, order completion) in a timely manner, as this directly impacts patient safety and team function.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Demonstrated high standards of professional conduct, including accountability, reliability, and a consistent commitment to patient safety.' },
+      { tone: 'pos', text: 'Maintained composure and professional behavior in high-stress clinical situations, serving as a positive role model for junior team members.' },
+      { tone: 'mod', text: 'Professionalism is strong; developing habits around proactive self-care and recognizing the signs of fatigue and burnout in oneself and colleagues will be valuable for sustainable practice.' },
+      { tone: 'con', text: 'In situations of disagreement with supervisors or consultants, channeling feedback through appropriate professional mechanisms will maintain effective working relationships.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Models exemplary professional behavior across all dimensions including accountability, integrity, compassion, and commitment to quality improvement.' },
+      { tone: 'pos', text: 'Demonstrates a strong commitment to patient safety, consistently identifying and escalating concerns and participating in quality improvement initiatives.' },
+      { tone: 'mod', text: 'Professionalism is excellent; ongoing attention to physician wellness and sustainable career practices is worth building into the transition to independent practice.' },
+      { tone: 'con', text: 'Encouraged to develop a personal approach to mentorship and advocacy for trainees in difficulty, as this will be an important leadership function in future practice.' },
+    ],
+  },
+  documentation: {
+    junior: [
+      { tone: 'pos', text: 'Clinical notes were clearly structured and included relevant history, examination findings, and a management plan, meeting expectations for the level of training.' },
+      { tone: 'pos', text: 'Order writing was accurate, with appropriate weight-based dosing and clear clinical indication, reflecting good attention to safe prescribing.' },
+      { tone: 'mod', text: 'Documentation is developing; ensuring clinical reasoning and the rationale for key decisions are clearly reflected in notes will add significant value to the medical record.' },
+      { tone: 'con', text: 'Encouraged to complete documentation in a timely manner during the shift, as delayed charting impacts handover safety and team awareness.' },
+      { tone: 'con', text: 'Discharge summaries and handover notes should include clear follow-up instructions and pending results to ensure safe care transitions.' },
+    ],
+    senior: [
+      { tone: 'pos', text: 'Documentation consistently reflected high-quality clinical reasoning, with well-organized notes that accurately conveyed the assessment, plan, and rationale for decisions.' },
+      { tone: 'pos', text: 'Discharge instructions were clear, complete, and patient-friendly, including return precautions and follow-up details that supported family understanding.' },
+      { tone: 'mod', text: 'Documentation is strong overall; for complex cases, ensuring that multidisciplinary communication and family discussions are reflected in the chart is increasingly important.' },
+      { tone: 'con', text: 'In high-volume settings, consider using structured templates or dot phrases to maintain documentation quality while managing time efficiently.' },
+    ],
+    fellow: [
+      { tone: 'pos', text: 'Documentation is consistently thorough, medicolegally sound, and reflects nuanced clinical reasoning — serving as a model standard for the team.' },
+      { tone: 'pos', text: 'Handover documentation was exemplary, providing actionable information about pending results, outstanding issues, and clear anticipatory guidance.' },
+      { tone: 'mod', text: 'Documentation quality is excellent; continuing to use charting as a teaching tool with junior learners — reviewing their notes with them — will multiply its educational impact.' },
+      { tone: 'con', text: 'For sensitive encounters (mental health, child maltreatment, goals of care), ensuring documentation is both clinically complete and appropriately framed for medicolegal purposes is a priority.' },
+    ],
+  },
+  other: {
+    fellow: [
+      // Nursing interactions
+      { tone: 'pos', text: 'Demonstrates excellent working relationships with nursing staff, communicating orders and clinical updates clearly, respectfully, and in a timely manner.' },
+      { tone: 'pos', text: 'Consistently seeks nursing input when formulating patient care plans, recognizing the value of their observations and contextual knowledge of the patient.' },
+      { tone: 'pos', text: 'Nursing team has noted this fellow is approachable, responsive to concerns, and reliably closes the loop on bedside requests and clinical updates.' },
+      { tone: 'mod', text: 'Nursing communication is generally good; proactively updating the bedside nurse before and after key clinical decisions would further strengthen team cohesion.' },
+      { tone: 'con', text: 'Encouraged to be more consistent in communicating changes in patient status or management plan directly to nursing, rather than relying on documentation alone.' },
+      { tone: 'con', text: 'At times, interactions with nursing staff under high workload pressure could be more collaborative in tone; this will be important to sustain as an independent practitioner.' },
+      // Anticipatory planning
+      { tone: 'pos', text: 'Demonstrates strong anticipatory planning, consistently thinking several steps ahead and preparing the team for likely clinical trajectories before they unfold.' },
+      { tone: 'pos', text: 'Proactively identifies patients at risk of deterioration and establishes clear escalation plans, reducing delays in management when clinical status changes.' },
+      { tone: 'pos', text: 'Reliably communicates anticipatory guidance to the oncoming team at handover, including expected results, potential clinical changes, and recommended next steps.' },
+      { tone: 'mod', text: 'Anticipatory planning is developing well; more consistently verbalizing contingency plans with the team (e.g., "if X happens, we will do Y") would improve patient safety and team preparedness.' },
+      { tone: 'con', text: 'In complex patients, taking a moment early in the encounter to articulate the most likely trajectory and potential complications will support more proactive and efficient management.' },
+      // Efficiency and flow management
+      { tone: 'pos', text: 'Manages personal clinical workload with efficiency and composure, seeing patients at an appropriate pace and maintaining consistent situational awareness across the department.' },
+      { tone: 'pos', text: 'Prioritizes competing clinical demands effectively, ensuring the most acutely unwell patients are assessed first while keeping the broader patient panel moving.' },
+      { tone: 'pos', text: 'Disposes patients efficiently without compromising thoroughness, demonstrating sound judgment about when assessment is complete and management plans are in place.' },
+      { tone: 'pos', text: 'Balances clinical teaching responsibilities with patient flow demands well, integrating education into shifts without creating bottlenecks or delays in patient care.' },
+      { tone: 'mod', text: 'Patient flow management is generally good; developing habits around regular panel review and proactive reassessment will optimize efficiency as shift complexity increases.' },
+      { tone: 'mod', text: 'Manages interruptions adequately; building a more systematic approach to safely returning to interrupted tasks will be important for independent practice in high-volume environments.' },
+      { tone: 'con', text: 'There is opportunity to improve efficiency by establishing clearer personal workflow habits — regular reassessment loops, early disposition planning, and proactive result review will all contribute.' },
+      { tone: 'con', text: 'Occasionally spends disproportionate time on complex cases at the expense of panel flow; developing strategies to parallelize workload will be important for managing a full ED as a staff physician.' },
+      // Disposition planning
+      { tone: 'pos', text: 'Anticipates likely disposition early in the patient encounter, allowing early engagement with bed management, consultants, and families well before a final decision is needed.' },
+      { tone: 'pos', text: 'Demonstrates nuanced understanding of admission thresholds, comfortably calibrating between safe discharge with close follow-up and admission for observation or treatment.' },
+      { tone: 'pos', text: 'Communicates disposition plans clearly and efficiently to consulting services, providing a concise clinical summary and a specific question or request.' },
+      { tone: 'pos', text: 'Constructs realistic and complete outpatient follow-up plans, including specific return precautions, follow-up timelines, and accessible resources for families.' },
+      { tone: 'pos', text: 'Appropriately identifies patients for whom observation is safer than discharge, demonstrating sound risk stratification and comfort with diagnostic uncertainty.' },
+      { tone: 'pos', text: 'Documents the rationale for borderline disposition decisions clearly and completely, including the clinical reasoning, risk discussion with families, and follow-up plan.' },
+      { tone: 'mod', text: 'Disposition planning is generally sound; developing a consistent habit of documenting the explicit reasoning for borderline admission or discharge decisions will improve medicolegal protection.' },
+      { tone: 'mod', text: 'Communication with consulting services is developing; providing a structured, concise clinical summary with a clearly framed question will make consultant interactions more efficient.' },
+      { tone: 'con', text: 'Encouraged to engage earlier in the clinical encounter with disposition planning — identifying the likely endpoint guides investigations, family communication, and efficient use of resources.' },
+      { tone: 'con', text: 'For borderline discharge decisions, it is important to document not only what was decided but why, including what safety netting was provided to the family and what follow-up was arranged.' },
+      // Teaching and supervision
+      { tone: 'pos', text: 'Provides junior learners with an appropriate degree of autonomy, stepping back to allow independent decision-making while remaining engaged and available for support.' },
+      { tone: 'pos', text: 'Reliably identifies unsafe or flawed clinical reasoning in learners and intervenes constructively and in a timely manner, ensuring patient safety is never compromised.' },
+      { tone: 'pos', text: 'Delivers high-quality bedside teaching that is concise, targeted to the learner\'s level, and directly connected to the clinical encounter at hand.' },
+      { tone: 'pos', text: 'Provides real-time, specific, and actionable feedback to learners after clinical encounters, balancing acknowledgment of strengths with clear developmental suggestions.' },
+      { tone: 'pos', text: 'Models professional behaviour consistently, demonstrating the values and practices of an excellent PEM physician through both direct teaching and daily conduct.' },
+      { tone: 'mod', text: 'Teaching is strong; continuing to develop skill in identifying the struggling learner early — and managing this sensitively and proactively — will be an important capability in independent practice.' },
+      { tone: 'mod', text: 'Balances teaching and productivity well overall; in particularly high-volume shifts, developing explicit strategies for safe task delegation and supervision will be important.' },
+      { tone: 'con', text: 'Encouraged to be more consistent in providing real-time feedback to learners during the shift rather than deferring entirely to end-of-rotation assessments.' },
+      { tone: 'con', text: 'At times, the level of autonomy granted to junior learners may outpace their demonstrated competence; a more graduated approach to supervision will better support both safety and learning.' },
+      // Documentation and medico-legal reasoning
+      { tone: 'pos', text: 'Charts consistently capture clinical reasoning in a clear and legally defensible manner, articulating the diagnostic thought process and the basis for key management decisions.' },
+      { tone: 'pos', text: 'Reassessments are reliably documented in the medical record, providing a clear chronological account of the patient\'s clinical course and response to treatment.' },
+      { tone: 'pos', text: 'Discharge rationale is explicitly stated in documentation, including risk stratification, safety netting provided to families, and arranged follow-up.' },
+      { tone: 'pos', text: 'Return precautions are consistently and clearly documented, using language that reflects both the clinical reasoning and the information shared with the family.' },
+      { tone: 'pos', text: 'Consultant discussions — including the recommendations received and their integration into the management plan — are reliably captured in the clinical record.' },
+      { tone: 'mod', text: 'Documentation is generally strong; ensuring that reassessments are charted explicitly during complex or prolonged encounters will strengthen the medicolegal record.' },
+      { tone: 'mod', text: 'Notes are generally clear; developing a more consistent approach to documenting consultant interactions and recommendations will improve care coordination and legal protection.' },
+      { tone: 'con', text: 'Some notes are overly brief or generic in their clinical reasoning section; documenting the specific features that drove key decisions is essential from a medicolegal standpoint.' },
+      { tone: 'con', text: 'Encouraged to avoid vague or defensively worded documentation (e.g., "patient stable, plan discussed") — specific, accurate, and contemporaneous notes are the most effective protection.' },
+      { tone: 'con', text: 'Return precautions and discharge instructions should be documented as a standard component of every disposition note, regardless of how straightforward the presentation appears.' },
+    ],
+  },
+};
+
+let currentType = 'junior';
+let currentDomain = 'history';
+let currentFilter = 'all';
+let selectedItems = {};
+
+function setType(type) {
+  currentType = type;
+  ['junior','senior','fellow'].forEach(t => {
+    document.getElementById('btn-'+t).classList.toggle('active', t === type);
+  });
+  document.getElementById('meta-level').textContent = type.charAt(0).toUpperCase()+type.slice(1);
+  const domainDef = DOMAINS.find(d => d.id === currentDomain);
+  if (domainDef && domainDef.fellowOnly && type !== 'fellow') {
+    currentDomain = 'history';
+  }
+  renderDomainTabs();
+  renderFeedbackList();
+  renderOutput();
+}
+
+function setSpecialty(val) {
+  const labels = {fm:'FM',peds:'Pediatrics',em:'Emerg Med',pem:'PEM',neonat:'Neonatology',picu:'PICU',other:'Sub-spec'};
+  document.getElementById('meta-spec').textContent = labels[val] || val;
+}
+
+function setDomain(id) {
+  currentDomain = id;
+  document.querySelectorAll('.domain-tab').forEach(t => t.classList.toggle('active', t.dataset.id === id));
+  const dom = DOMAINS.find(d => d.id === id);
+  document.getElementById('panel-title').textContent = dom.label;
+  document.getElementById('panel-subtitle').textContent = 'EPA ref: ' + dom.epa + ' · Select statements to add to your report';
+  renderFeedbackList();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.className = 'filter-btn';
+    if (b.id === 'f-'+f) {
+      if (f==='all') b.classList.add('active-all');
+      else if (f==='pos') b.classList.add('active-pos');
+      else if (f==='mod') b.classList.add('active-mod');
+      else b.classList.add('active-con');
+    }
+  });
+  renderFeedbackList();
+}
+
+function renderDomainTabs() {
+  const container = document.getElementById('domain-tabs');
+  container.innerHTML = DOMAINS.filter(d => !d.fellowOnly || currentType === 'fellow').map(d => {
+    const col = DOMAIN_COLORS[d.id];
+    const count = (FEEDBACK[d.id]?.[currentType] || []).filter(i => isSelected(d.id, i.text)).length;
+    const fellowClass = d.fellowOnly ? ' fellow-only' : '';
+    const badge = d.fellowOnly ? '<span class="fellow-badge">Fellow</span>' : '';
+    return `<div class="domain-tab${d.id===currentDomain?' active':''}${fellowClass}" data-id="${d.id}" onclick="setDomain('${d.id}')">
+      <div class="domain-dot" style="background:${col.dot}"></div>
+      <span>${d.label}</span>
+      ${badge}
+      ${count>0?`<span class="domain-count">${count}</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+function isSelected(domain, text) {
+  return selectedItems[domain] && selectedItems[domain].includes(text);
+}
+
+function toggleItem(domain, text, tone) {
+  if (!selectedItems[domain]) selectedItems[domain] = [];
+  const idx = selectedItems[domain].indexOf(text);
+  if (idx >= 0) {
+    selectedItems[domain].splice(idx, 1);
+  } else {
+    selectedItems[domain].push(text);
+  }
+  renderFeedbackList();
+  renderOutput();
+  renderDomainTabs();
+}
+
+function renderFeedbackList() {
+  const list = document.getElementById('feedback-list');
+  const allItems = FEEDBACK[currentDomain]?.[currentType] || [];
+  const items = allItems.filter(i => currentFilter==='all' || i.tone===currentFilter);
+
+  if (items.length === 0) {
+    list.innerHTML = '<div class="no-items-msg">No feedback statements match the current filter.</div>';
+    return;
+  }
+
+  const grouped = { pos: [], mod: [], con: [] };
+  items.forEach(i => grouped[i.tone].push(i));
+
+  const labels = { pos: 'Positive', mod: 'Mixed / Moderate', con: 'Constructive' };
+  let html = '';
+  ['pos','mod','con'].forEach(tone => {
+    if (grouped[tone].length === 0) return;
+    html += `<div class="section-header-inline"><div class="section-line"></div><span>${labels[tone]}</span><div class="section-line"></div></div>`;
+    grouped[tone].forEach(item => {
+      const globalIdx = allItems.indexOf(item);
+      const sel = isSelected(currentDomain, item.text);
+      html += `<div class="feedback-item${sel?' selected':''}" data-domain="${currentDomain}" data-idx="${globalIdx}">
+        <div class="fb-tone-dot dot-${item.tone}"></div>
+        <div class="fb-text">${item.text}</div>
+        <div class="fb-check">${sel?'✓':''}</div>
+      </div>`;
+    });
+  });
+
+  list.innerHTML = html;
+
+  list.querySelectorAll('.feedback-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const domain = el.dataset.domain;
+      const idx = parseInt(el.dataset.idx);
+      const item = (FEEDBACK[domain]?.[currentType] || [])[idx];
+      if (item) toggleItem(domain, item.text, item.tone);
+    });
+  });
+}
+
+
+
+function renderOutput() {
+  const body = document.getElementById('output-body');
+  const allSelected = [];
+  DOMAINS.forEach(d => {
+    const items = selectedItems[d.id] || [];
+    items.forEach(text => {
+      const found = (FEEDBACK[d.id]?.[currentType] || []).find(i => i.text === text);
+      if (found) allSelected.push({ domain: d, item: found });
+    });
+  });
+
+  const total = allSelected.length;
+  document.getElementById('selected-count').innerHTML = `<span>${total}</span> item${total!==1?'s':''} selected`;
+
+  if (total === 0) {
+    body.innerHTML = `<div class="empty-output" id="empty-msg"><div class="empty-icon">📋</div><div>Click any feedback statement<br>in the centre panel to add it here.</div></div>`;
+    return;
+  }
+
+  const byDomain = {};
+  allSelected.forEach(({ domain, item }) => {
+    if (!byDomain[domain.id]) byDomain[domain.id] = { domain, items: [] };
+    byDomain[domain.id].items.push(item);
+  });
+
+  const col = DOMAIN_COLORS;
+  let html = '<div class="output-items">';
+  Object.entries(byDomain).forEach(([id, { domain, items }]) => {
+    items.forEach((item, itemIdx) => {
+      html += `<div class="output-item ${item.tone}">
+        <span style="flex:1">${item.text}</span>
+        <button class="remove-btn" data-domain="${id}" data-item-idx="${itemIdx}" title="Remove">✕</button>
+      </div>`;
+    });
+  });
+  html += '</div>';
+
+  body.innerHTML = html;
+
+  body.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const domain = btn.dataset.domain;
+      const idx = parseInt(btn.dataset.itemIdx);
+      const items = selectedItems[domain] || [];
+      if (idx >= 0 && idx < items.length) {
+        items.splice(idx, 1);
+        selectedItems[domain] = items;
+        renderFeedbackList();
+        renderOutput();
+        renderDomainTabs();
+      }
+    });
+  });
+}
+
+function copyToClipboard() {
+  const name = document.getElementById('trainee-name').value.trim();
+  const rotation = document.getElementById('rotation-input').value.trim();
+  const type = currentType.charAt(0).toUpperCase() + currentType.slice(1);
+  const spec = document.getElementById('meta-spec').textContent;
+
+  let text = 'PEM FEEDBACK REPORT\n';
+  text += '===================\n';
+  if (name) text += `Trainee: ${name}\n`;
+  text += `Level: ${type} (${spec})\n`;
+  if (rotation) text += `Rotation: ${rotation}\n`;
+  text += '\n';
+
+  const allSelected = [];
+  DOMAINS.forEach(d => {
+    const items = selectedItems[d.id] || [];
+    items.forEach(txt => {
+      const found = (FEEDBACK[d.id]?.[currentType] || []).find(i => i.text === txt);
+      if (found) allSelected.push({ domain: d, item: found });
+    });
+  });
+
+  const byDomain = {};
+  allSelected.forEach(({ domain, item }) => {
+    if (!byDomain[domain.id]) byDomain[domain.id] = { domain, items: [] };
+    byDomain[domain.id].items.push(item);
+  });
+
+  Object.entries(byDomain).forEach(([id, { domain, items }]) => {
+    items.forEach(item => { text += `• ${item.text}\n`; });
+  });
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy to Clipboard';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function clearAll() {
+  selectedItems = {};
+  renderFeedbackList();
+  renderOutput();
+  renderDomainTabs();
+}
+
+// INIT
+renderDomainTabs();
+setDomain('history');
+renderOutput();
+
+document.getElementById('trainee-name').addEventListener('input', () => {});
+document.getElementById('rotation-input').addEventListener('input', () => {});
+</script>
+
+</body>
+</html>
