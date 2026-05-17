@@ -2314,5 +2314,29 @@ function calculate() {
   populateLangSelect(saved);
   switchLanguage(saved);
   console.log("[fever-sheet] langSelect options:", document.getElementById('langSelect')?.options?.length);
+
+  /* ─── Bind event handlers (CSP-safe, no inline on* attributes) ─── */
+
+  // Print button
+  const printBtn = document.getElementById('printBtn');
+  if (printBtn) printBtn.addEventListener('click', () => window.print());
+
+  // Weight input → recalculate on every keystroke
+  const weightInput = document.getElementById('weightInput');
+  if (weightInput) weightInput.addEventListener('input', calculate);
+
+  // kg / lbs unit toggle (data-unit on each button)
+  document.querySelectorAll('.unit-btn[data-unit]').forEach(btn => {
+    btn.addEventListener('click', () => setUnit(btn.dataset.unit));
+  });
+
+  // Age toggle (< 6 months)
+  const ageToggle = document.getElementById('ageToggle');
+  if (ageToggle) ageToggle.addEventListener('click', toggleAge);
+
+  // Schedule tabs (data-schedule on each tab)
+  document.querySelectorAll('.sched-tab[data-schedule]').forEach(btn => {
+    btn.addEventListener('click', () => setSchedule(btn.dataset.schedule));
+  });
 })();
 
